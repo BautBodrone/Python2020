@@ -1,7 +1,9 @@
 def ventana_juego():
     import PySimpleGUI as sg
     import random
-    dic=dict()
+    import boton
+    dic=dict() #diccionario de botones(objetos)
+    fichas = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
 
     valores = {"A": 1, "B": 3, "C": 3, "D": 2, "E": 1, "F": 4, "G": 2, "H": 4, "I": 1, "J": 1, "K": 5, "L": 1, "M": 3,
                "N": 1, "O": 1, "P": 3, "Q": 10, "R": 1, "S": 1, "T": 1, "U": 1, "V": 4, "W": 4, "X": 8, "Y": 4, "Z": 10}
@@ -9,38 +11,6 @@ def ventana_juego():
     bolsa = ["A", "A", "A", "B", "B", "C", "D", "D", "E", "E", "E", "F", "G", "H", "I", "I", "J", "K", "L", "M", "N",
              "O", "O", "P", "Q", "R", "S"]
 
-    marrones = ((0, 0),(0, 7),(0, 14),(7, 0),(7, 7),(7, 14),(14, 0),(14, 7),(14,14))
-    rojos = ((1,1),(2,2),(3,3),(4,4),(5,5),(1,13),(2,12),(3,11),(4, 10),(5,9),(9,5),(10,4),(11,3),(12,2),(13,1),(9,9),(10,10),(11,11),(12,12),(13,13))
-    azules = ((1,5),(1,9),(13,9),(13,5),(6,6),(6,8),(8,6),(8,8),(5,1),(9,1),(9,13,),(5,13))
-    verdes = ((0,4),(0,10),(10,0),(4,0),(4,14),(10,14),(14,4),(14,10),(2,6),(2,8),(8,2),(6,2),(12,6),(12,8),(8,12),(6,12),(3,7),(7,3),(11,7),(7,11))
-    def asignarColor(clave,x,y):
-        """"se asigna un color a cada clave"""
-        if(x,y) in rojos:
-            dic[clave] = "red"
-            return ("black", "red")
-        elif(x,y) in azules:
-            dic[clave] = "blue"
-            return ("black", "blue")
-        elif(x,y) in marrones:
-            dic[clave] = "brown"
-            return ("black", "brown")
-        elif(x,y) in verdes:
-            dic[clave] = "green"
-            return ("black", "green")
-        else:
-            dic[clave] ='white'
-            return("black", "white")
-    def valorDeBoton(clave,n):
-        """"se asigna el valor de cada ficha dependiendo en que color es asigando en la matriz"""
-        if dic[clave] == 'red':
-            return (n-1)
-        elif dic[clave] == 'blue':
-            return (n-3)
-        elif dic[clave] == 'green':
-            return (n*2)
-        elif dic[clave] == 'brown':
-            return (n*3)
-        return(n)
     def desbloquear_boton():
         """desbloquea todos los cuadrantes"""
         for lista in matriz:
@@ -106,6 +76,8 @@ def ventana_juego():
             linea = []
             for x in range(N):
                 clave = str(x) + "," + str(y)
+                bot = boton.Boton()
+                bot.asignarColor(y,x)
                 linea.append(
                     sg.Button(
                         "",
@@ -113,9 +85,10 @@ def ventana_juego():
                         disabled=True,
                         font='Courier 10',
                         size=(4, 2) if N <= 12 else (2, 1),
-                        button_color=asignarColor(clave,x,y),
+                        button_color = bot.color,
                     ),
                 )
+                dic[clave] = bot
             matriz.append(linea)
         linea = [
             sg.Submit("comenzar",key= 'comenzar' ,size=(9, 2)),
@@ -126,37 +99,37 @@ def ventana_juego():
 
     def crear_izquierda():
       return   ([ [sg.Submit(
-            random.choice(bolsa),
+            random.choice(fichas),
             key="letra1",
             size=(4, 2),
             button_color=("black", "white")),
             sg.Submit(
-                random.choice(bolsa),
+                random.choice(fichas),
                 key="letra2",
                 size=(4, 2),
                 button_color=("black", "white")),
             sg.Submit(
-                random.choice(bolsa),
+                random.choice(fichas),
                 key="letra3",
                 size=(4, 2),
                 button_color=("black", "white")),
             sg.Submit(
-                random.choice(bolsa),
+                random.choice(fichas),
                 key="letra4",
                 size=(4, 2),
                 button_color=("black", "white")),
             sg.Submit(
-                random.choice(bolsa),
+                random.choice(fichas),
                 key="letra5",
                 size=(4, 2),
                 button_color=("black", "white")),
             sg.Submit(
-                random.choice(bolsa),
+                random.choice(fichas),
                 key="letra6",
                 size=(4, 2),
                 button_color=("black", "white")),
             sg.Submit(
-                random.choice(bolsa),
+                random.choice(fichas),
                 key="letra7",
                 size=(4, 2),
                 button_color=("black", "white")),
@@ -196,14 +169,10 @@ def ventana_juego():
             break
         elif event == "confirmar":#ingresa la palabra en el tablero
             # confirmar es solo de testing por ahora
-            palabra = ""
             total = 0
-            n=0
-            for clave in presionadas:
-                palabra += window.Element(clave).GetText()
-            for letra in palabra:
-                total += valorDeBoton(presionadas[n],valores[letra])
-                n+=1
+            for clave in presionadas: # suma el puntaje
+                palabra = window.Element(clave).GetText()
+                total += dic[clave].devolverValor(valores[palabra])# el diccionario de claves devuelve el boton con esa blave y el boton devuelve su valor
             print(total)
             if len(presionadas) > 0:
                 buscar_fichas(letras, True)
