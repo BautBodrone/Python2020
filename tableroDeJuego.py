@@ -2,6 +2,8 @@ def ventana_juego():
     import PySimpleGUI as sg
     import random
     import boton
+
+    botones_usados=[(7,7)]
     puntajeTotal = 0
     turno = ( True, False )#verdadero yo, falso la maquina
     dic = dict()  # diccionario de botones(objetos)
@@ -200,7 +202,7 @@ def ventana_juego():
     while True:
         if (turnoEligido):
             event, values = window.Read()
-            event_anterior = event
+
 
             if event is None:  # si no recibe un evento se termina el programa
                 window.Close()
@@ -230,11 +232,11 @@ def ventana_juego():
             elif event == "cancelar":  # debuelve las palabras que puse en el tablero
                 presionadas = cancelar_seleccion(letras, presionadas)
 
-            elif event in tablero_jugador:  # ingresa palabras
+            elif event in tablero_jugador:  # entra si se preciona una letra del atril
                 print("Tipo: ", event)
-                if event_anterior in tablero_jugador:  # sie fija si la letra anterior fue una del tablero para desbloquar
+                if event_anterior in tablero_jugador:  # se fija si la letra anterior fue una del tablero para desbloquar
                     window.Element(event_anterior).Update(disabled=False)
-                if len(presionadas) == 0:  # desbloquea botones de grilla
+                if len(presionadas) == 0:  # desbloquea botones de la matriz
                     desbloquear_boton()
                 elif len(presionadas) < 2:  # desbloquea botones dependiendo de la pos
                     desbloquear_der_abajo(presionadas[len(presionadas) - 1])
@@ -246,7 +248,7 @@ def ventana_juego():
 
             else:  # se entra cada vez que toco una celda de la matriz
                 print(presionadas)
-                if event in presionadas:
+                if event in presionadas:# que hace este if
                     presionadas.remove(event)
                     window.Element(event).Update(text="")
                     window.Element(event).Update(button_color=("black", "white"))
@@ -255,7 +257,7 @@ def ventana_juego():
                     window.Element(event).Update(text=actual)
                     window.Element(event).Update(button_color=("black", "red"))
                     bloquar_boton()
-
+            event_anterior = event
 
         if(not turnoEligido):
             print("turno de la maquina")
@@ -263,7 +265,5 @@ def ventana_juego():
         #event_anterior = event
 
         #event, values = window.Read()
-
-
 if __name__ == "__main__":
     ventana_juego()
