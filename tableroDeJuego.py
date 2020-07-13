@@ -3,7 +3,7 @@ def ventana_juego():
     import random
     import boton
 
-    botones_usados=[]
+    botones_usados=[] #lista todos lod botones usados desde que se presiona la celda 7,7
     puntajeTotal = 0
     turno = ( True, False )#verdadero yo, falso la maquina
     dic = dict()  # diccionario de botones(objetos)
@@ -190,24 +190,20 @@ def ventana_juego():
     def letrasPegadas(cla,usados):# todavia no esta listo, pero sirve de como ejemplo
         """verifica que si la letras esta pegada a otra"""
         x, y = int(cla[0]), int(cla[1])
-        if devolverString(x-1,y+1) in usados:
+        if devolverString(x-1,y) in usados:
             return True
-        elif devolverString(x-1,y-1) in usados:
+        elif devolverString(x+1,y) in usados:
             return True
-        elif devolverString(x+1,y+1) in usados:
+        elif devolverString(x,y+1) in usados:
             return True
-        elif devolverString(x+1,y-1) in usados:
+        elif devolverString(x,y-1) in usados:
             return True
         else:
-            print(x)
-            print(y)
-            print("no entro")
             return False
 
     def palabrasPegadas(claves,usados):
         """verifica si la palabras esta pegada a otra, letra por letra"""
         for each in claves:
-            print(each)
             if (letrasPegadas(each.split(","),usados)):
                 return True
         return False
@@ -257,7 +253,7 @@ def ventana_juego():
 
                 # confirmar es solo de testing por ahora
                 total = 0
-                if(HorozontalesVerticales(presionadas,botones_usados)):
+                if(HorozontalesVerticales(presionadas,botones_usados))and(len(presionadas)>1):
                     for clave in presionadas:  # suma el puntaje
                         palabra = window.Element(clave).GetText()
                         total += dic[clave].devolverValor(valores[palabra])  # el diccionario de claves devuelve el boton con esa blave y el boton devuelve su valor
@@ -267,6 +263,7 @@ def ventana_juego():
                     window.FindElement('puntaje').Update("el puntaje es {}".format(text)) #muestra el puntaje
                     if len(presionadas) > 0:
                         buscar_fichas(letras, True)
+                    botones_usados.extend(presionadas)
                     presionadas = cancelar_seleccion(letras)
                     letras = []  # se elimina todas las letras
                     turnoEligido = not turnoEligido
@@ -310,10 +307,9 @@ def ventana_juego():
                     window.Element(event).Update(text="")
                     window.Element(event).Update(button_color=("black", "white"))
                 else:  # entra si la celda del tablero esta en blanco
-                    if(event == "7,7") or ("7,7") in botones_usados:#se pregunta por "7,7" porque es la celda
-                        botones_usados.append(event)                #donde se tiene que comenzar y si ya se
-                        print(event)                                #presiono se sigue con cualquier celda
-                        presionadas.append(event)
+                    if(event == "7,7") or ("7,7") in botones_usados or ("7,7") in presionadas:#se pregunta por "7,7" porque es la celda
+                        print(event)                                                          #donde se tiene que comenzar y si ya se
+                        presionadas.append(event)                                             #presiono se sigue con cualquier celda
                         window.Element(event).Update(text=actual)
                         window.Element(event).Update(button_color=("black", "red"))
                         bloquar_boton()
