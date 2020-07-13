@@ -3,7 +3,7 @@ def ventana_juego():
     import random
     import boton
 
-    botones_usados=[(7,7)]
+    botones_usados=[]
     puntajeTotal = 0
     turno = ( True, False )#verdadero yo, falso la maquina
     dic = dict()  # diccionario de botones(objetos)
@@ -150,32 +150,75 @@ def ventana_juego():
         return ([[sg.Submit(
             "",
             size=(4, 2),
+            disabled=True,
             button_color=("black", "white")),
             sg.Submit(
                 "",
                 size=(4, 2),
+                disabled=True,
                 button_color=("black", "white")),
             sg.Submit(
                 "",
                 size=(4, 2),
+                disabled=True,
                 button_color=("black", "white")),
             sg.Submit(
                 "",
                 size=(4, 2),
+                disabled=True,
                 button_color=("black", "white")),
             sg.Submit(
                 "",
                 size=(4, 2),
+                disabled=True,
                 button_color=("black", "white")),
             sg.Submit(
                 "",
                 size=(4, 2),
+                disabled=True,
                 button_color=("black", "white")),
             sg.Submit(
                 "",
                 size=(4, 2),
+                disabled=True,
                 button_color=("black", "white")),
         ],[sg.Text("el puntaje es 0", key="puntajeIA",size=(20, 1))],])
+    def devolverString(x,y):
+        return (str(x)+","+str(y))
+
+
+    def letrasPegadas(cla,usados):# todavia no esta listo, pero sirve de como ejemplo
+        """verifica que si la letras esta pegada a otra"""
+        x, y = int(cla[0]), int(cla[1])
+        if devolverString(x-1,y+1) in usados:
+            return True
+        elif devolverString(x-1,y-1) in usados:
+            return True
+        elif devolverString(x+1,y+1) in usados:
+            return True
+        elif devolverString(x+1,y-1) in usados:
+            return True
+        else:
+            print(x)
+            print(y)
+            print("no entro")
+            return False
+
+    def palabrasPegadas(claves,usados):
+        """verifica si la palabras esta pegada a otra, letra por letra"""
+        for each in claves:
+            print(each)
+            if (letrasPegadas(each.split(","),usados)):
+                return True
+        return False
+
+    def HorozontalesVerticales(presionados,usados):
+        """verifica si la palabras esta en vertical o Horosoltal en caso de ser verdadero devuelve True sino false"""
+        if (("7,7") in presionados):
+            return True
+        else:
+            return palabrasPegadas(presionados,usados)
+
 
     inteligenciaArt = generarAtrilIA()
     matriz = generar_matriz()
@@ -214,21 +257,35 @@ def ventana_juego():
 
                 # confirmar es solo de testing por ahora
                 total = 0
-                for clave in presionadas:  # suma el puntaje
-                    palabra = window.Element(clave).GetText()
-                    total += dic[clave].devolverValor(valores[palabra])  # el diccionario de claves devuelve el boton con esa blave y el boton devuelve su valor
-                print(total)
-                puntajeTotal += total #el puntaje real del jugador real
-                text=str(puntajeTotal)
-                window.FindElement('puntaje').Update("el puntaje es {}".format(text)) #muestra el puntaje
-                if len(presionadas) > 0:
-                    buscar_fichas(letras, True)
-                presionadas = cancelar_seleccion(letras)
-                letras = []  # se elimina todas las letras
-                turnoEligido = not turnoEligido
-
+                if(HorozontalesVerticales(presionadas,botones_usados)):
+                    for clave in presionadas:  # suma el puntaje
+                        palabra = window.Element(clave).GetText()
+                        total += dic[clave].devolverValor(valores[palabra])  # el diccionario de claves devuelve el boton con esa blave y el boton devuelve su valor
+                    print(total)
+                    puntajeTotal += total #el puntaje real del jugador real
+                    text=str(puntajeTotal)
+                    window.FindElement('puntaje').Update("el puntaje es {}".format(text)) #muestra el puntaje
+                    if len(presionadas) > 0:
+                        buscar_fichas(letras, True)
+                    presionadas = cancelar_seleccion(letras)
+                    letras = []  # se elimina todas las letras
+                    turnoEligido = not turnoEligido
+                else:
+                    for each in tablero_jugador:  # cambia las letras del atril
+                        window.Element(each).Update(disabled=False)
+                    for clave in presionadas:  # vuelve al valor anterior a los botones selecionados de la matriz
+                        window.Element(clave).Update(button_color=dic[clave].color)
+                        window.Element(clave).Update(text="")
+                    presionadas = cancelar_seleccion(letras)
+                    letras = []
             elif event == "cambiar":  # cambia las letras
                 print('falta')
+                for each in tablero_jugador: #cambia las letras del atril
+                    window.Element(each).Update(random.choice(fichas),disabled=False)
+                for clave in presionadas: # vuelve al valor anterior a los botones selecionados de la matriz
+                    window.Element(clave).Update(button_color=dic[clave].color)
+                    window.Element(clave).Update(text="")
+
             elif event == "cancelar":  # debuelve las palabras que puse en el tablero
                 presionadas = cancelar_seleccion(letras, presionadas)
 
@@ -253,10 +310,14 @@ def ventana_juego():
                     window.Element(event).Update(text="")
                     window.Element(event).Update(button_color=("black", "white"))
                 else:  # entra si la celda del tablero esta en blanco
-                    presionadas.append(event)
-                    window.Element(event).Update(text=actual)
-                    window.Element(event).Update(button_color=("black", "red"))
-                    bloquar_boton()
+                    if(event == "7,7") or ("7,7") in botones_usados:#se pregunta por "7,7" porque es la celda
+                        botones_usados.append(event)                #donde se tiene que comenzar y si ya se
+                        print(event)                                #presiono se sigue con cualquier celda
+                        presionadas.append(event)
+                        window.Element(event).Update(text=actual)
+                        window.Element(event).Update(button_color=("black", "red"))
+                        bloquar_boton()
+                        print(botones_usados)
             event_anterior = event
 
         if(not turnoEligido):
