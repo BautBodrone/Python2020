@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="03777fbc-c101-4147-84f7-908ca62d1dfd" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/correccion_de_palabras.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/buscador_palabra.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tableroDeJuego.py" beforeDir="false" afterPath="$PROJECT_DIR$/tableroDeJuego.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -179,10 +181,10 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="424" y="7" key="CommitChangelistDialog2/0.0.1536.824@0.0.1536.824" timestamp="1590875529658" />
-    <state x="487" y="148" key="FileChooserDialogImpl" timestamp="1594784362889">
+    <state x="487" y="148" key="FileChooserDialogImpl" timestamp="1594785404238">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="487" y="148" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1594784362889" />
+    <state x="487" y="148" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1594785404238" />
     <state x="548" y="167" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1593042373342" />
     <state width="1515" height="210" key="GridCell.Tab.0.bottom" timestamp="1593483216446">
       <screen x="0" y="0" width="1536" height="824" />
