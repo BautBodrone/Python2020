@@ -2,6 +2,7 @@ def ventana_juego():
     import PySimpleGUI as sg
     import random
     import boton
+    from correccion_de_palabras import palabraValida
 
     botones_usados=[] #lista todos lod botones usados desde que se presiona la celda 7,7
     puntajeTotal = 0
@@ -104,37 +105,37 @@ def ventana_juego():
 
     def crear_izquierda():
         return ([[sg.Submit(
-            random.choice(fichas),
+            "A",
             key="letra1",
             size=(4, 2),
             button_color=("black", "white")),
             sg.Submit(
-                random.choice(fichas),
+                "L",
                 key="letra2",
                 size=(4, 2),
                 button_color=("black", "white")),
             sg.Submit(
-                random.choice(fichas),
+                "O",
                 key="letra3",
                 size=(4, 2),
                 button_color=("black", "white")),
             sg.Submit(
-                random.choice(fichas),
+                "T",
                 key="letra4",
                 size=(4, 2),
                 button_color=("black", "white")),
             sg.Submit(
-                random.choice(fichas),
+                "P",
                 key="letra5",
                 size=(4, 2),
                 button_color=("black", "white")),
             sg.Submit(
-                random.choice(fichas),
+                "E",
                 key="letra6",
                 size=(4, 2),
                 button_color=("black", "white")),
             sg.Submit(
-                random.choice(fichas),
+                "Z",
                 key="letra7",
                 size=(4, 2),
                 button_color=("black", "white")),
@@ -145,7 +146,7 @@ def ventana_juego():
                 sg.Submit("CANCELAR SELECCIÓN", key="cancelar")
             ]
         ])
-    def generarAtrilIA():# el lado del atril
+    def generarAtrilIA():
         """se muesta el puntaje y el atril del jugador IA"""
         return ([[sg.Submit(
             "",
@@ -183,11 +184,13 @@ def ventana_juego():
                 disabled=True,
                 button_color=("black", "white")),
         ],[sg.Text("el puntaje es 0", key="puntajeIA",size=(20, 1))],])
+
+
     def devolverString(x,y):
         return (str(x)+","+str(y))
 
 
-    def letrasPegadas(cla,usados):# todavia no esta listo, pero sirve de como ejemplo
+    def letrasPegadas(cla,usados):# falta verificar por si esta fuera de rango
         """verifica que si la letras esta pegada a otra"""
         x, y = int(cla[0]), int(cla[1])
         if devolverString(x-1,y) in usados:
@@ -214,6 +217,12 @@ def ventana_juego():
             return True
         else:
             return palabrasPegadas(presionados,usados)
+    def verificarConfirmar(list,totalCeldas,l):
+        """se pregunta si todo esta bien para insertar la palabras"""
+        if (HorozontalesVerticales(list,totalCeldas)) and (len(list) > 1) and (palabraValida(l, 'medio')):
+            return True
+        else:
+            return False
 
 
     inteligenciaArt = generarAtrilIA()
@@ -253,7 +262,10 @@ def ventana_juego():
 
                 # confirmar es solo de testing por ahora
                 total = 0
-                if(HorozontalesVerticales(presionadas,botones_usados))and(len(presionadas)>1):
+                letra=""
+                for i in presionadas:
+                    letra+=window.Element(i).GetText()
+                if( verificarConfirmar(presionadas,botones_usados,letra) ):
                     for clave in presionadas:  # suma el puntaje
                         palabra = window.Element(clave).GetText()
                         total += dic[clave].devolverValor(valores[palabra])  # el diccionario de claves devuelve el boton con esa blave y el boton devuelve su valor
@@ -282,6 +294,7 @@ def ventana_juego():
                 for clave in presionadas: # vuelve al valor anterior a los botones selecionados de la matriz
                     window.Element(clave).Update(button_color=dic[clave].color)
                     window.Element(clave).Update(text="")
+                turnoEligido = not turnoEligido
 
             elif event == "cancelar":  # debuelve las palabras que puse en el tablero
                 presionadas = cancelar_seleccion(letras, presionadas)
