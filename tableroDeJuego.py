@@ -70,7 +70,7 @@ def ventana_juego():
     def cancelar_seleccion(letras, seleccion=[]):
         if len(seleccion) > 0:
             for clave in seleccion:
-                window.Element(clave).Update(text="", disabled=True, button_color=("black", "white"))
+                window.Element(clave).Update(text="", disabled=True, button_color=dic[clave].color)
         for clave in letras:
             window.Element(clave).Update(disabled=False)
         return []
@@ -186,8 +186,36 @@ def ventana_juego():
         ],[sg.Text("el puntaje es 0", key="puntajeIA",size=(20, 1))],])
 
 
-    def devolverString(x,y):
-        return (str(x)+","+str(y))
+    def devolverString(x, y):
+        return (str(x) + "," + str(y))
+
+    def letrasPegadas(cla, usados):  # falta verificar por si esta fuera de rango
+        """verifica que si la letras esta pegada a otra"""
+        x, y = int(cla[0]), int(cla[1])
+        if devolverString(x - 1, y) in usados:
+            return True
+        elif devolverString(x + 1, y) in usados:
+            return True
+        elif devolverString(x, y + 1) in usados:
+            return True
+        elif devolverString(x, y - 1) in usados:
+            return True
+        else:
+            return False
+
+    def palabrasPegadas(claves, usados):
+        """verifica si la palabras esta pegada a otra, letra por letra"""
+        for each in claves:
+            if (letrasPegadas(each.split(","), usados)):
+                return True
+        return False
+
+    def HorozontalesVerticales(presionados, usados):
+        """verifica si la palabras esta en vertical o Horosoltal en caso de ser verdadero devuelve True sino false"""
+        if (("7,7") in presionados):
+            return True
+        else:
+            return palabrasPegadas(presionados, usados)
 
 
     def letrasPegadas(cla,usados):# falta verificar por si esta fuera de rango
@@ -217,6 +245,7 @@ def ventana_juego():
             return True
         else:
             return palabrasPegadas(presionados,usados)
+
     def verificarConfirmar(list,totalCeldas,l):
         """se pregunta si todo esta bien para insertar la palabras"""
         if (HorozontalesVerticales(list,totalCeldas)) and (len(list) > 1) and (palabraValida(l, 'medio')):
@@ -245,6 +274,7 @@ def ventana_juego():
     actual = ''
     event_anterior = ""
     tablero_jugador = ("letra1", "letra2", "letra3", 'letra4', 'letra5', 'letra6', 'letra7')
+    cambiar=False
 
     turnoEligido = random.choice(turno)
     while True:
@@ -258,9 +288,8 @@ def ventana_juego():
             if event == 'salir':
                 window.close()
                 break
-            elif event == "confirmar":  # ingresa la palabra en el tablero
+            elif (event == "confirmar"):  # ingresa la palabra en el tablero
 
-                # confirmar es solo de testing por ahora
                 total = 0
                 letra=""
                 for i in presionadas:
@@ -288,14 +317,27 @@ def ventana_juego():
                     presionadas = cancelar_seleccion(letras)
                     letras = []
             elif event == "cambiar":  # cambia las letras
-                print('falta')
-                for each in tablero_jugador: #cambia las letras del atril
-                    window.Element(each).Update(random.choice(fichas),disabled=False)
-                for clave in presionadas: # vuelve al valor anterior a los botones selecionados de la matriz
-                    window.Element(clave).Update(button_color=dic[clave].color)
-                    window.Element(clave).Update(text="")
-                turnoEligido = not turnoEligido
+                presionadas = cancelar_seleccion(letras, presionadas)
+                cambiar = not cambiar
 
+
+                window.Element("cancelar").Update(disabled=True)
+                window.Element("confirmar").Update(disabled=True)
+                event, values = window.Read()
+                letras_para_cambiar=[]
+                while cambiar and event is not None:
+                    if event == "cambiar":
+                        cambiar= not cambiar
+                        for i in letras_para_cambiar:
+                            window.Element(i).Update(disabled=False)
+                            window.Element(i).Update(random.choice(fichas))
+                    elif event in tablero_jugador:
+                        letras_para_cambiar.append(event)
+                        window.Element(event).Update(disabled=True)
+                        event, values = window.Read()
+                window.Element("cancelar").Update(disabled=False)
+                window.Element("confirmar").Update(disabled=False)
+                turnoEligido= not turnoEligido
             elif event == "cancelar":  # debuelve las palabras que puse en el tablero
                 presionadas = cancelar_seleccion(letras, presionadas)
 
@@ -332,8 +374,5 @@ def ventana_juego():
         if(not turnoEligido):
             print("turno de la maquina")
             turnoEligido = not turnoEligido
-        #event_anterior = event
-
-        #event, values = window.Read()
 if __name__ == "__main__":
     ventana_juego()
