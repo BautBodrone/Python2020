@@ -83,7 +83,7 @@ def ventana_juego():
             for x in range(N):
                 clave = str(x) + "," + str(y)
                 bot = boton.Boton()
-                bot.asignarColor(y, x)
+                bot.asignarColor(y, x, "dificil")
                 linea.append(
                     sg.Button(
                         "",
@@ -282,7 +282,7 @@ def ventana_juego():
             event, values = window.Read()
 
 
-            if event is None:  # si no recibe un evento se termina el programa
+            if event is (None):  # si no recibe un evento se termina el programa
                 window.Close()
                 break
             if event == 'salir':
@@ -374,5 +374,6 @@ def ventana_juego():
         if(not turnoEligido):
             print("turno de la maquina")
             turnoEligido = not turnoEligido
+
 if __name__ == "__main__":
     ventana_juego()
