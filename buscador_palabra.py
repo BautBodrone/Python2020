@@ -1,20 +1,22 @@
 import itertools as it
 import random
-import pattern.text.es as pt
 import correccion_de_palabras as correccion
 
+dic=dict()
+dic['facil']=2
+dic['medio']=3
+dic['dificil']=4
+def convertirTupla(tupla):  # sacado de geekforgeeks
 
-# CODIGO BOT
-def buscador_palabra(tablero, difcultad):
-    def convertirTupla(tupla):  # sacado de geekforgeeks
-        str = ''.join(tupla)
-        return str
+    str = ''.join(tupla)
+    return str
 
-    largo_palabra = random.randint(2, 7)
-    posible = list(it.permutations(tablero, largo_palabra))
-    for pos in posible:
-        posible_pal = pt.spelling.suggest(convertirTupla(pos))[0]
-        if posible_pal[1] == 1:
-            if correccion.correccion_de_palabra(posible_pal[0], difcultad):
-                return posible_pal
-    return False
+def buscar_palabra(atril, dificultad):
+
+    for i in range(dic[dificultad],len(atril)):
+        for each in it.permutations(atril,i):
+            palabra=convertirTupla(each)
+            if(correccion.palabraValida(palabra,dificultad)):
+                return palabra
+    return ""
+

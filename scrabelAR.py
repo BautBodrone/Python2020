@@ -1,6 +1,6 @@
 import PySimpleGUI as sg
 import config as gui_configuracion
-import ScrabblerAR as juego
+import tableroDeJuego as juego
 
 '''Menú principal e inicio del programa. Desde acá se llama a todos los demás módulos'''
 
