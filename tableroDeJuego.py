@@ -90,7 +90,7 @@ def ventana_juego():
             for x in range(N):
                 clave = str(x) + "," + str(y)
                 bot = boton.Boton()
-                bot.asignarColor(y, x, "facil")
+                bot.asignarColor(y, x, "dificil")
                 linea.append(
                     sg.Button(
                         "",
@@ -120,6 +120,7 @@ def ventana_juego():
 
     def crear_izquierda():#tambien se puede atomatizar con "letra"+(1+n)
         return ([crear_atril("letra"),
+                 [sg.Listbox(values=[], key='jugada1', size=(50, 10))],
                  [sg.Text("el puntaje es 0", key="puntaje", size=(20, 1))],
                  [sg.Text('', size=(8, 2), font=('Helvetica', 20), justification='center', key='-DISPLAY-')],
                  [
@@ -130,7 +131,7 @@ def ventana_juego():
             ])
     def generarAtrilIA():#se puede atomatizar
         """se muesta el puntaje y el atril del jugador IA"""
-        return ([crear_atril("bot")
+        return ([crear_atril("bot"),[sg.Listbox(values=[], key='jugada2', size=(50, 10))]
         ,[sg.Text("el puntaje es 0", key="puntajeIA",size=(20, 1))],])
 
 
@@ -206,35 +207,54 @@ def ventana_juego():
     def time_as_int():
         return int(round(time.time() * 100))
 
+    def preguntar():
+        """abre una ventana para preguntar si se elige una partida nueva o continua con una guardada"""
 
-    inteligenciaArt = generarAtrilIA()
-    matriz = generar_matriz()
-    columna_derecha = matriz
-    columna_izquierda = crear_izquierda()
+        layout2 = [[ sg.Submit("Continuar con la partida ",key="continuar"),
+                   sg.Submit("Iniciar una nueva partida ", key = "no continuar")]]
+        window2 = sg.Window("ScrabbleAR").Layout(layout2)
+        event1, values1 = window2.Read()
+        window2.Close()
+        return event1
 
-    layout = [
-            [
-            sg.Column(inteligenciaArt),
-            sg.Column(columna_derecha),
-            sg.Column(columna_izquierda)]
-    ]
+    evento = preguntar()
+    if evento == "continuar":
+        try:
+            raise
+        except:
+            sg.popup("no hay partida guardada")
+    elif(evento == "no continuar"):
+        inteligenciaArt = generarAtrilIA()
+        matriz = generar_matriz()
+        columna_derecha = matriz
+        columna_izquierda = crear_izquierda()
 
-    window = sg.Window("ScrabbleAR").Layout(layout)
+        layout = [
+                [
+                sg.Column(inteligenciaArt),
+                sg.Column(columna_derecha),
+                sg.Column(columna_izquierda)]
+        ]
 
-    letras = []  # las letras seleccionadas para colocarlas en el tablero
-    actual = ''
-    event_anterior = ""
-    tablero_jugador = ("letra1", "letra2", "letra3", 'letra4', 'letra5', 'letra6', 'letra7')
-    cambiar=False
-    comenzar=False
+        window = sg.Window("ScrabbleAR").Layout(layout)
+        jugada = []
 
-    deshabiliatar = True#utilizado para habilitar atril
-    iniciado=False#utilizado una sola vez para buscar las 7 letras del atril
+        letras = []  # las letras seleccionadas para colocarlas en el tablero
+        actual = ''
+        event_anterior = ""
+        tablero_jugador = ("letra1", "letra2", "letra3", 'letra4', 'letra5', 'letra6', 'letra7')
+        cambiar=False
+        comenzar=False
 
-    current_time, paused_time, paused = 0, 0, False #variables del timer
-    start_time = time_as_int()
+        deshabiliatar = True#utilizado para habilitar atril
+        iniciado=False#utilizado una sola vez para buscar las 7 letras del atril
 
-    turnoEligido = random.choice(turno)
+        current_time, paused_time, paused = 0, 0, False #variables del timer
+        start_time = time_as_int()
+
+        turnoEligido = random.choice(turno)
+    else:#en caso de que el evento sea None
+        raise
     while True:
         if (turnoEligido):
 
@@ -285,6 +305,8 @@ def ventana_juego():
                     window.FindElement('puntaje').Update("el puntaje es {}".format(text)) #muestra el puntaje
                     if len(presionadas) > 0:
                         cambiar_fichas(letras, True)
+                    jugada.append("la letra formada es: {0} y su valor de la jugada es: {1}".format(letra.lower(), total))
+                    window.Element('jugada1').Update(jugada)
                     botones_usados.extend(presionadas)
                     presionadas = cancelar_seleccion(letras)
                     letras = []  # se elimina todas las letras
@@ -379,4 +401,7 @@ def ventana_juego():
 
 
 if __name__ == "__main__":
-    ventana_juego()
+    try:
+        ventana_juego()
+    except:
+        print("sale")
