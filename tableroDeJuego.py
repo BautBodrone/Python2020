@@ -91,7 +91,7 @@ def ventana_juego():
             for x in range(N):
                 clave = str(x) + "," + str(y)
                 bot = boton.Boton()
-                bot.asignarColor(y, x, "dificil")
+                bot.asignarColor(y, x, "facil")
                 linea.append(
                     sg.Button(
                         "",
@@ -138,35 +138,6 @@ def ventana_juego():
 
     def devolverString(x, y):
         return (str(x) + "," + str(y))
-
-    def letrasPegadas(cla, usados):  # falta verificar por si esta fuera de rango
-        """verifica que si la letras esta pegada a otra"""
-        x, y = int(cla[0]), int(cla[1])
-        if devolverString(x - 1, y) in usados:
-            return True
-        elif devolverString(x + 1, y) in usados:
-            return True
-        elif devolverString(x, y + 1) in usados:
-            return True
-        elif devolverString(x, y - 1) in usados:
-            return True
-        else:
-            return False
-
-    def palabrasPegadas(claves, usados):
-        """verifica si la palabras esta pegada a otra, letra por letra"""
-        for each in claves:
-            if (letrasPegadas(each.split(","), usados)):
-                return True
-        return False
-
-    def HorozontalesVerticales(presionados, usados):
-        """verifica si la palabras esta en vertical o Horizontal en caso de ser verdadero devuelve True sino false"""
-        if (("7,7") in presionados):
-            return True
-        else:
-            return palabrasPegadas(presionados, usados)
-
 
     def letrasPegadas(cla,usados):# falta verificar por si esta fuera de rango
         """verifica que si la letras esta pegada a otra"""
@@ -258,7 +229,7 @@ def ventana_juego():
         raise
     while True:
         if not paused:
-            if current_time <1000:
+            if current_time <10000:
                 current_time = int(round(time.time() * 100)) - start_time
             else:# se termina el juego y se define al ganador
                 break
@@ -349,12 +320,12 @@ def ventana_juego():
             #     elif event in tablero_jugador:
             #         letras_para_cambiar.append(event)
             #         window.Element(event).Update(disabled=True)
-            if (event is None):
-                break
-            else:
-                window.Element("cancelar").Update(disabled=False)
-                window.Element("confirmar").Update(disabled=False)
-                turnoEligido= not turnoEligido
+            #if (event is None):
+             #   break
+            #else:
+             #   window.Element("cancelar").Update(disabled=False)
+              #  window.Element("confirmar").Update(disabled=False)
+            turnoEligido= not turnoEligido
 
         elif event == "cancelar":  # debuelve las palabras que puse en el tablero
             presionadas = cancelar_seleccion(letras, presionadas)
@@ -398,7 +369,11 @@ def ventana_juego():
             event_anterior = event
         if not turnoEligido:
             print("turno de la maquina")
+            #desbloquear_boton()
+            turno_pc(botones_usados, window, "facil")
+            #bloquear_boton()
             turnoEligido = not turnoEligido
+            print(botones_usados)
 
         window['-DISPLAY-'].Update('{:02d}:{:02d}.{:02d}'.format((current_time // 100) // 60,
                                                                  (current_time // 100) % 60,
@@ -410,3 +385,4 @@ if __name__ == "__main__":
     #try:
     ventana_juego()
     #except:
+    print("sale")
