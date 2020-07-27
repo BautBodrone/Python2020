@@ -97,8 +97,9 @@ def ventana_juego():
                         key=clave,
                         disabled=True,
                         font='Courier 10',
-                        size=(4, 2) if N <= 12 else (2, 1),
+                        size=(4, 2) if N <= 12 else (4, 2),
                         button_color=bot.color,
+                        pad=(0, 0)
                     ),
                 )
                 dic[clave] = bot
