@@ -15,7 +15,7 @@ def ventana_juego():
 
     dic = dict()  # diccionario de botones(objetos)
 
-    valores = user_config.valor_fichas  # busca los valores de la letras en la configuracion
+    valores = user_config.convertir_a_valores()  # busca los valores de la letras en la configuracion
     bolsa = user_config.convertir_en_bolsa()  # busca todas las letras q se van a jugar en la configuracion
     tiempo_total = user_config.tiempo*6000
     dificultad = user_config.dificultad

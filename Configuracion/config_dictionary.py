@@ -40,6 +40,13 @@ class Configuracion:
                 bolsa.append(x)
         return bolsa
 
+    def convertir_a_valores(self):
+        valores = {}
+        for x in range(ord("A"), ord("Z") + 1):
+            for y in self.valor_fichas:
+                if chr(x) in y:
+                    valores[chr(x)] = self.valor_fichas[y]
+        return (valores)
 
 def obtener_config():
     def abrir_configuracion():
