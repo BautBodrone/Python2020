@@ -52,9 +52,9 @@ def abrir_configuracion():
             def_medio=False
             def_dificil=False
 
-            if configuracion.dificultad == "Facil":
+            if configuracion.dificultad == "facil":
                 def_facil=True
-            elif configuracion.dificultad == "Medio":
+            elif configuracion.dificultad == "medio":
                 def_medio=True
             else:
                 def_dificil=True
@@ -307,11 +307,11 @@ def abrir_configuracion():
             if opcion_actual == "dificultad_y_valor_de_fichas":
                 user_config.valor_fichas = retorno_valor_fichas(values)
                 if values["dificultad_facil"]:
-                    user_config.dificultad = "Facil"
+                    user_config.dificultad = "facil"
                 elif values["dificultad_medio"]:
-                    user_config.dificultad = "Medio"
+                    user_config.dificultad = "medio"
                 else:
-                    user_config.dificultad = "Dificil"
+                    user_config.dificultad = "dificil"
                 user_config.tiempo = values ["cant_minutos"]
 
         if event == 'Guardar':

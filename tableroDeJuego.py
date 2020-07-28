@@ -5,21 +5,21 @@ def ventana_juego():
     import time
     from correccion_de_palabras import palabraValida
     from moduloIA import turno_pc
+    from Configuracion import config_dictionary as configuracion
 
+    user_config = configuracion.obtener_config()
     presionadas = []  # los cuadrantes que se seleccionaron del tablero
-    botones_usados=[] #lista todos lod botones usados desde que se presiona la celda 7,7
+    botones_usados=[]  # lista todos lod botones usados desde que se presiona la celda 7,7
     puntajeTotal = 0
-    turno = ( True, False )#verdadero yo, falso la maquina
+    turno = ( True, False )  # verdadero yo, falso la maquina
+
     dic = dict()  # diccionario de botones(objetos)
-    fichas = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
-              "V", "W", "X", "Y", "Z"]
 
-    valores = {"A": 1, "B": 3, "C": 3, "D": 2, "E": 1, "F": 4, "G": 2, "H": 4, "I": 1, "J": 1, "K": 5, "L": 1, "M": 3,
-               "N": 1, "O": 1, "P": 3, "Q": 10, "R": 1, "S": 1, "T": 1, "U": 1, "V": 4, "W": 4, "X": 8, "Y": 4, "Z": 10}
+    valores = user_config.valor_fichas  # busca los valores de la letras en la configuracion
+    bolsa = user_config.convertir_en_bolsa()  # busca todas las letras q se van a jugar en la configuracion
+    tiempo_total = user_config.tiempo*6000
+    dificultad = user_config.dificultad
 
-    bolsa = ["A", "A", "A", "B", "B", "C", "D", "D", "E", "E", "E", "F", "G", "H", "I", "I", "J", "K", "L", "M", "N",
-             "O", "O", "P", "Q", "R", "S"]
-    boton_inicial=""
     def desbloquear_boton():
         """desbloquea todos los cuadrantes"""
         for lista in matriz:
@@ -230,7 +230,7 @@ def ventana_juego():
         raise
     while True:
         if not paused:
-            if current_time <10000:
+            if current_time <tiempo_total:
                 current_time = int(round(time.time() * 100)) - start_time
             else:# se termina el juego y se define al ganador
                 break
@@ -371,7 +371,7 @@ def ventana_juego():
         if not turnoEligido:
             print("turno de la maquina")
             #desbloquear_boton()
-            turno_pc(botones_usados, window, "facil")
+            turno_pc(botones_usados, window, dificultad)
             #bloquear_boton()
             turnoEligido = not turnoEligido
             print(botones_usados)

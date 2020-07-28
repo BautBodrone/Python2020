@@ -11,7 +11,7 @@ class Configuracion:
 
     def __init__(self,
                  tiempo= 2,
-                 dificultad= "Facil",
+                 dificultad= "facil",
                  valor_fichas= {"A, E, O, S, I, U, N, L, R, T": 1,
                                 "C, D, G": 2,
                                 "M, B, P": 3,
@@ -33,17 +33,13 @@ class Configuracion:
     def to_dict(self):
         return self.__dict__
 
-    def get_dificultad(self):
-        return self.dificultad
+    def convertir_en_bolsa(self):
+        bolsa = []
+        for x in self.cantidad_fichas:
+            for y in range(0, self.cantidad_fichas[x]):
+                bolsa.append(x)
+        return bolsa
 
-    def get_cantidad_fichas(self):
-        return self.cantidad_fichas
-
-    def get_tiempo(self):
-        return self.tiempo
-
-    def get_valor_fichas(self):
-        return self.valor_fichas
 
 def obtener_config():
     def abrir_configuracion():
