@@ -1,70 +1,128 @@
 from buscador_palabra import buscar_palabra
-
+import random
+jugada= []
 dic=dict()
 dic['facil']=2
 dic['medio']=3
 dic['dificil']=4
-fichas = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
-              "V", "W", "X", "Y", "Z"]
+
 
 def devolverString(x, y):
     return (str(x) + "," + str(y))
 
 
-def letrasPegadas(cla, usados):  # falta verificar por si esta fuera de rango
-    """verifica que si la letras esta pegada a otra"""
-    x, y = int(cla[0]), int(cla[1])
-    if devolverString(x - 1, y) in usados:
-        return True
-    elif devolverString(x + 1, y) in usados:
-        return True
-    elif devolverString(x, y + 1) in usados:
-        return True
-    elif devolverString(x, y - 1) in usados:
-        return True
-    else:
-        return False
 
 
-def no_choca(pos, palabra, x, y, letrast):
-    for i in palabra:
-        if not devolverString(x,y) in letrast:
-            pos[i]=(x,y)
-            y+=1
-        else:
-            return False
-    return True
-
-
-def primera_jugada(window, dificultad,letrasT):
+def primera_jugada(fichas, window, dificultad,letrasT, valores, valor_boton):
     palabra = buscar_palabra(fichas, dificultad)
+    puntos=0
     x,y=7,7
-    for letra in palabra:
-        clave = str(x)+','+str(y)
-        #window.Element(clave).Update(disabled = False)
-        window.Element(clave).Update(text = letra)
-        window.Element(clave).Update(disabled = True, disabled_button_color=("black", "red"))
-        y+=1
-        letrasT.append(clave)
-    return  window
-def se_sigue(letraT, dificultad, window, n=15):
-    palabra = buscar_palabra(fichas, dificultad)
-    pos = dict()
-    for x in range(n):
-        for y in range(n):
-            if (letrasPegadas(devolverString(x,y).split(","),letraT)):
-                if(no_choca(pos,palabra,x,y,letraT)):
-                    break
-    if(len(pos) == dic[dificultad]):
-        for i in pos.keys():
-            window.Element(devolverString(pos[i][0],pos[i][1])).Update(disabled=False)
-            window.Element(devolverString(pos[i][0],pos[i][1])).Update(i)
-            window.Element(devolverString(pos[i][0], pos[i][1])).Update(disabled=False)
-            letraT.append(devolverString(pos[i][0], pos[i][1]))
-
-
-def turno_pc(letrasT, window, dificultad ):
-    if len(letrasT) == 0:
-        return primera_jugada( window, dificultad, letrasT)
+    lugar = random.choice([True,False])#true=derecha y false=abajo
+    if lugar:
+        for i in palabra:
+            clave=devolverString(x,y)
+            puntos += valor_boton[clave].devolverValor(valores[i])
+            window.Element(clave).Update(text = i)
+            window.Element(clave).Update(disabled = True, button_color=("black","purple"))
+            fichas.remove(i)
+            y+=1
+            letrasT.append(clave)
     else:
-        return se_sigue(letrasT, dificultad, window)
+        for i in palabra:
+            clave=devolverString(x,y)
+            puntos += valor_boton[clave].devolverValor(valores[i])
+            window.Element(clave).Update(text = i)
+            window.Element(clave).Update(disabled = True , button_color=("black","purple"))
+            fichas.remove(i)
+            x+=1
+            letrasT.append(clave)
+    jugada.append("la letra formada es: {0} y su valor de la jugada es: {1}".format(palabra, puntos))
+    window.Element("jugada2").update(jugada)
+
+    return puntos
+
+def se_sigue(fichas, letrast, dificultad, window, valores, valor_boton):
+    n=0
+    ok= False
+    puntos=0
+    palabra=buscar_palabra(fichas, dificultad)
+    while not ok:
+        x=random.randrange(15)
+        y=random.randrange(15)
+        clave=devolverString(x,y)
+        if not clave in letrast :
+            lugar = random.choice([True,False])#true=derecha y false=abajo
+            abajo=True
+            derecha=True
+            while (abajo or derecha) and not ok: #entra en el while para ver si se puede colocar en posicon ya sea abajo o arriba sin chocar con otras palabras
+                print(palabra)
+                if lugar :
+                    letras_dic = dict()
+                    tamanioPalabra = len(palabra)
+                    if (tamanioPalabra+x) <15:#se fija que no este fuera del rango
+                        auxX=x
+                        for i in palabra:#pregunta por si el tamaño no choca con otra palabra
+                            if devolverString(auxX,y) in letrast:
+                                abajo= not abajo
+                                break
+                            else:
+                                clave=devolverString(auxX,y)
+                                letras_dic[clave]=i
+                                auxX+=1
+                    else:
+                        abajo=not abajo
+                        lugar=not lugar
+                    print("el tamanio es: " + str(len(letras_dic)))
+                    if len(letras_dic) >= dic[dificultad]:# si el tamaño es acorde a la dificultad pone la letra
+                        for i in letras_dic.keys():
+                            letrast.append(i)
+                            puntos+=valor_boton[i].devolverValor(valores[letras_dic[i]])
+                            window.Element(i).Update(text=letras_dic[i], button_color=("black","purple"))
+                            fichas.remove(letras_dic[i])
+                        jugada.append("la letra formada es: {0} y su valor de la jugada es: {1}".format(palabra,puntos))
+                        window.Element("jugada2").update(jugada)
+                        print(palabra)
+                        ok=True #con esto sale
+                else:
+                    letras_dic = dict()
+                    tamanioPalabra = len(palabra)
+                    if (tamanioPalabra + y) < 15:
+                        auxY = y
+                        for i in palabra:
+                            if devolverString(x, auxY) in letrast:
+                                derecha = not derecha
+                                break
+                            else:
+                                clave=devolverString(x,auxY)
+                                letras_dic[clave] = i
+                                auxY += 1
+                    else:
+                        derecha = not derecha
+                        lugar = not lugar
+                    print("el tamanio es: "+str(len(letras_dic)))
+                    if len(letras_dic) >= dic[dificultad]:
+                        for i in letras_dic.keys():
+                            letrast.append(i)
+                            puntos += valor_boton[i].devolverValor(valores[letras_dic[i]])
+                            window.Element(i).Update(text=letras_dic[i], button_color=("black", "purple"))
+                        jugada.append("la letra formada es: {0} y su valor de la jugada es: {1}".format(palabra, puntos))
+                        window.Element("jugada2").update(jugada)
+                        ok=True
+                if (n < 50):
+                    n += 1
+                else:
+                    break
+        if(n<50):# para que no quede en un bucle infinico en caso de que no hay lugar
+            n+=1
+        else:
+            break
+
+    return puntos
+
+def turno_pc(fichas, letrasT, window, dificultad, valores, valor_boton ):
+    if len(letrasT) == 0:#en el caso de no sea 0 es porque no hay ninguna palabra puesta y la palabra se pone el 77
+        puntaje=primera_jugada(fichas, window, dificultad, letrasT, valores, valor_boton)
+        return puntaje
+    else:
+        puntaje = se_sigue(fichas, letrasT, dificultad,window, valores, valor_boton)
+        return puntaje

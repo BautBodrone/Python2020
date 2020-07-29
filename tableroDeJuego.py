@@ -11,6 +11,7 @@ def ventana_juego():
     presionadas = []  # los cuadrantes que se seleccionaron del tablero
     botones_usados=[]  # lista todos lod botones usados desde que se presiona la celda 7,7
     puntajeTotal = 0
+    puntajeMaquina=0
     turno = ( True, False )  # verdadero yo, falso la maquina
 
     dic = dict()  # diccionario de botones(objetos)
@@ -19,7 +20,6 @@ def ventana_juego():
     bolsa = user_config.convertir_en_bolsa()  # busca todas las letras q se van a jugar en la configuracion
     tiempo_total = user_config.tiempo*6000
     dificultad = user_config.dificultad
-
     def desbloquear_boton():
         """desbloquea todos los cuadrantes"""
         for lista in matriz:
@@ -91,7 +91,7 @@ def ventana_juego():
             for x in range(N):
                 clave = str(x) + "," + str(y)
                 bot = boton.Boton()
-                bot.asignarColor(y, x, "facil")
+                bot.asignarColor(y, x, dificultad)
                 linea.append(
                     sg.Button(
                         "",
@@ -137,40 +137,9 @@ def ventana_juego():
         ,[sg.Text("el puntaje es 0", key="puntajeIA",size=(20, 1))],])
 
 
-    def devolverString(x, y):
-        return (str(x) + "," + str(y))
-
-    def letrasPegadas(cla,usados):# falta verificar por si esta fuera de rango
-        """verifica que si la letras esta pegada a otra"""
-        x, y = int(cla[0]), int(cla[1])
-        if devolverString(x-1,y) in usados:
-            return True
-        elif devolverString(x+1,y) in usados:
-            return True
-        elif devolverString(x,y+1) in usados:
-            return True
-        elif devolverString(x,y-1) in usados:
-            return True
-        else:
-            return False
-
-    def palabrasPegadas(claves,usados):
-        """verifica si la palabras esta pegada a otra, letra por letra"""
-        for each in claves:
-            if (letrasPegadas(each.split(","),usados)):
-                return True
-        return False
-
-    def HorozontalesVerticales(presionados,usados):
-        """verifica si la palabras esta en vertical o Horosoltal en caso de ser verdadero devuelve True sino false"""
-        if (("7,7") in presionados):
-            return True
-        else:
-            return palabrasPegadas(presionados,usados)
-
-    def verificarConfirmar(list,totalCeldas,l):
+    def verificarConfirmar(list,l):
         """se pregunta si todo esta bien para insertar la palabras"""
-        if (HorozontalesVerticales(list,totalCeldas)) and (len(list) > 1) and (palabraValida(l, 'facil')):
+        if (len(list) > 1) and (palabraValida(l, dificultad)):
             print('verificarConfirmar devuelve True')
             return True
         else:
@@ -179,6 +148,15 @@ def ventana_juego():
 
     def time_as_int():
         return int(round(time.time() * 100))
+    def fichaAtrilAI():
+        l=[]
+        for i in range(7):
+           l.append(buscar_ficha())
+        return l
+
+    def reponerFichas(atrilMaquina):
+        while(len(atrilMaquina) != 7):
+            atrilMaquina.append(buscar_ficha())
 
     def preguntar():
         """abre una ventana para preguntar si se elige una partida nueva o continua con una guardada"""
@@ -224,8 +202,8 @@ def ventana_juego():
 
         current_time, paused_time, paused = 0, time_as_int(), False #variables del timer
         start_time = time_as_int()
-
-        turnoEligido = random.choice(turno)
+        atrilMaquina= fichaAtrilAI()# se crea el atril de la maquina
+        #turnoEligido = random.choice(turno)
     else:#en caso de que el evento sea None
         raise
     while True:
@@ -273,7 +251,7 @@ def ventana_juego():
                 letra += window.Element(i).GetText()
             print(letra)
 
-            if verificarConfirmar(presionadas, botones_usados, letra):
+            if verificarConfirmar(presionadas, letra):
                 for clave in presionadas:  # suma el puntaje
                     palabra = window.Element(clave).GetText()
                     total += dic[clave].devolverValor(valores[palabra])  # el diccionario de claves devuelve el boton con esa blave y el boton devuelve su valor
@@ -360,7 +338,7 @@ def ventana_juego():
                 window.Element(event).Update(text="")
                 window.Element(event).Update(button_color=("black", "white"))
             else:  # entra si la celda del tablero esta en blanco
-                if event != "__TIMEOUT__":
+                if event != "__TIMEOUT__" and not event in botones_usados :
                     presionadas.append(event)
                     window.Element(event).Update(text=actual)
                     window.Element(event).Update(button_color=("black", "red"))
@@ -370,9 +348,14 @@ def ventana_juego():
             event_anterior = event
         if not turnoEligido:
             print("turno de la maquina")
+            print(atrilMaquina)
             #desbloquear_boton()
-            turno_pc(botones_usados, window, dificultad)
+            puntajeMaquina+=float(turno_pc(atrilMaquina, botones_usados, window, dificultad, valores, dic))
+            window.Element("puntajeIA").Update("el puntaje total es: {}".format(str(puntajeMaquina)))
+            print(atrilMaquina)
+            reponerFichas(atrilMaquina)
             #bloquear_boton()
+
             turnoEligido = not turnoEligido
             print(botones_usados)
 
