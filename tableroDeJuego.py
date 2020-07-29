@@ -24,7 +24,8 @@ def ventana_juego():
         """desbloquea todos los cuadrantes"""
         for lista in matriz:
             for boton in lista:
-                boton.Update(disabled=False)
+                if boton.get_text()=="":
+                    boton.Update(disabled=False)
 
     def bloquear_boton():
         """bloquea todos los cuadrantes"""
@@ -232,7 +233,7 @@ def ventana_juego():
                 paused_time = time_as_int()
                 window.Element("comenzar").Update(text="comenzar")
             deshabiliatar=not deshabiliatar
-            for x in range (1,8):
+            for x in range(1, 8):
                 window.Element("letra"+str(x)).Update(disabled=deshabiliatar)
                 if not iniciado:
                     window.Element("letra"+str(x)).Update(text=buscar_ficha())
@@ -341,7 +342,7 @@ def ventana_juego():
                 if event != "__TIMEOUT__" and not event in botones_usados :
                     presionadas.append(event)
                     window.Element(event).Update(text=actual)
-                    window.Element(event).Update(button_color=("black", "red"))
+                    window.Element(event).Update(button_color=("black", "violet"))
                     bloquear_boton()
                     #print(presionadas)
         if event != "__TIMEOUT__":
