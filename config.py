@@ -226,11 +226,11 @@ def abrir_configuracion():
         return layout
 
     def PopUp_guardar_y_salir(configuracion):
-        '''Mensaje que consulta al usuario si desea salir sin guardar o guardar antes de salir.
-        Retorna si se guardaron o no los cambios'''
+        """Mensaje que consulta al usuario si desea salir sin guardar o guardar antes de salir.
+        Retorna si se guardaron o no los cambios"""
         layout = [
             [
-                sg.T('Hay cambios que no ha guardado, ¿Desea guardar los cambios antes de salir?')
+                sg.Text('Hay cambios que no ha guardado, ¿Desea guardar los cambios antes de salir?')
             ],
             [
                 sg.Button('Guardar y salir', key='boton_confirmar'),
@@ -289,12 +289,12 @@ def abrir_configuracion():
                                                                               "\n¿Seguro que desea continuar?"):
 
                 if opcion_actual == "dificultad_y_valor_de_fichas":
-                    user_config.tiempo = default_config.get_tiempo()
-                    user_config.dificultad = default_config.get_dificultad()
-                    user_config.valor_fichas = default_config.get_valor_fichas()
+                    user_config.tiempo = default_config.tiempo
+                    user_config.dificultad = default_config.dificultad
+                    user_config.valor_fichas = default_config.valor_fichas
 
                 if opcion_actual == "cantidad_de_fichas":
-                    user_config.cantidad_fichas = default_config.get_cantidad_fichas()
+                    user_config.cantidad_fichas = default_config.cantidad_fichas
 
                 sg.PopupOK('Valores por defecto reestablecidos.')
 

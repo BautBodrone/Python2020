@@ -63,13 +63,14 @@ def ventana_juego():
             if anterior == "" or x_ant != x - 1:
                 window.Element(pos).Update(disabled=False)
 
-    def cambiar_fichas(lista_fichas, remover_ficha=False):  # se le asigna una nueva letra al usuario
+    def cambiar_fichas(lista_fichas):
         if len(bolsa) >= len(lista_fichas):
             for ficha in lista_fichas:
                 cambio = window.Element(ficha).GetText()
                 window.Element(ficha).Update(text=random.choice(bolsa))
-                if not remover_ficha:
-                    bolsa.append(cambio)
+                bolsa.append(cambio)
+        else:
+            sg.popup_error("No se puede cambiar por falta de fichas en la bolsa")
 
     def buscar_ficha():
         text = random.choice(bolsa)
@@ -123,21 +124,21 @@ def ventana_juego():
             atril_l.append(boton)
         return atril_l
 
-    def crear_izquierda():  # tambien se puede atomatizar con "letra"+(1+n)
+    def crear_izquierda():
         return ([crear_atril("letra"),
                  [sg.Listbox(values=[], key='jugada1', size=(50, 10))],
                  [sg.Text("el puntaje es 0", key="puntaje", size=(20, 1))],
-                 [sg.Text('', size=(8, 2), font=('Helvetica', 20), justification='center', key='-DISPLAY-')],
+                 [sg.Text('', size=(8, 2), font=("Helvetica", 20), justification="center", key="-DISPLAY-")],
                  [
                      sg.Submit("Seleccionar Palabra", key="confirmar", disabled=True),
                      sg.Submit("Cambiar Letra", key="cambiar", disabled=True),
-                     sg.Submit("CANCELAR SELECCIÓN", key="cancelar", disabled=True)
+                     sg.Submit("Cancelar seleccion", key="cancelar", disabled=True)
                  ]
                  ])
 
     def generarAtrilIA():  # se puede atomatizar
         """se muesta el puntaje y el atril del jugador IA"""
-        return ([crear_atril("bot"), [sg.Listbox(values=[], key='jugada2', size=(50, 10))]
+        return ([crear_atril("bot"), [sg.Listbox(values=[], key="jugada2", size=(50, 10))]
             , [sg.Text("el puntaje es 0", key="puntajeIA", size=(20, 1))], ])
 
     def verificarConfirmar(list, l):
@@ -179,6 +180,7 @@ def ventana_juego():
         except:
             sg.popup("no hay partida guardada")
     elif (evento == "no continuar"):
+        turno_elegido = random.choice(turno)
         inteligenciaArt = generarAtrilIA()
         matriz = generar_matriz()
         columna_derecha = matriz
@@ -197,8 +199,8 @@ def ventana_juego():
         letras = []  # las letras seleccionadas para colocarlas en el tablero
         actual = ''
         event_anterior = ""
-        tablero_jugador = ("letra1", "letra2", "letra3", 'letra4', 'letra5', 'letra6', 'letra7')
-        cambiar = False
+        atril_jugador = ("letra1", "letra2", "letra3", 'letra4', 'letra5', 'letra6', 'letra7')
+        cambio = False
         comenzar = False
 
         deshabiliatar = True  # utilizado para habilitar atril
@@ -207,6 +209,7 @@ def ventana_juego():
         current_time, paused_time, paused = 0, time_as_int(), False  # variables del timer
         start_time = time_as_int()
         atrilMaquina = fichaAtrilAI()  # se crea el atril de la maquina
+        cambios_cantidad = 3
         # turnoEligido = random.choice(turno)
     else:  # en caso de que el evento sea None
         raise
@@ -231,7 +234,6 @@ def ventana_juego():
             if comenzar:
                 window.Element("comenzar").Update(text="pausar")
                 start_time = start_time + time_as_int() - paused_time
-                turnoEligido = random.choice(turno)
             else:
                 paused_time = time_as_int()
                 window.Element("comenzar").Update(text="comenzar")
@@ -265,15 +267,17 @@ def ventana_juego():
                 text = str(puntajeTotal)
                 window.FindElement('puntaje').Update("el puntaje es {}".format(text))  # muestra el puntaje
                 if len(presionadas) > 0:
-                    cambiar_fichas(letras, True)
+                    for letra in letras:
+                        window.Element(letra).Update(text=buscar_ficha())
+                    #cambiar_fichas(letras, True)
                 jugada.append("la letra formada es: {0} y su valor de la jugada es: {1}".format(letra.lower(), total))
                 window.Element('jugada1').Update(jugada)
                 botones_usados.extend(presionadas)
                 presionadas = cancelar_seleccion(letras)
                 letras = []  # se elimina todas las letras
-                turnoEligido = not turnoEligido
+                turno_elegido = not turno_elegido
                 # elif ('7,7' in presionadas):
-                #     for each in tablero_jugador:  # cambia las letras del atril
+                #     for each in atril_jugador:  # cambia las letras del atril
                 #         window.Element(each).Update(disabled=False)
                 #     for clave in presionadas[1:]:  # vuelve al valor anterior a los botones selecionados de la matriz
                 #         window.Element(clave).Update(button_color=dic[clave].color)
@@ -281,7 +285,7 @@ def ventana_juego():
                 #     presionadas = cancelar_seleccion(letras)
                 #     letras = []
             else:
-                for each in tablero_jugador:  # cambia las letras del atril
+                for each in atril_jugador:  # cambia las letras del atril
                     window.Element(each).Update(disabled=False)
                 for clave in presionadas:  # vuelve al valor anterior a los botones selecionados de la matriz
                     window.Element(clave).Update(button_color=dic[clave].color)
@@ -290,33 +294,15 @@ def ventana_juego():
                 letras = []
 
         elif event == "cambiar":  # cambia las letras
-            # presionadas = cancelar_seleccion(letras, presionadas)
-            # cambiar = not cambiar
-            # window.Element("cancelar").Update(disabled=True)
-            # window.Element("confirmar").Update(disabled=True)
-            # letras_para_cambiar=[]
-            # while cambiar and event is not None:
-            #     if event == "cambiar":
-            #         cambiar= not cambiar
-            #         for i in letras_para_cambiar:
-            #             window.Element(i).Update(disabled=False)
-            #             window.Element(i).Update(random.choice(fichas))
-            #     elif event in tablero_jugador:
-            #         letras_para_cambiar.append(event)
-            #         window.Element(event).Update(disabled=True)
-            # if (event is None):
-            #   break
-            # else:
-            #   window.Element("cancelar").Update(disabled=False)
-            #  window.Element("confirmar").Update(disabled=False)
-            turnoEligido = not turnoEligido
+            print("falta")
+
 
         elif event == "cancelar":  # debuelve las palabras que puse en el tablero
             presionadas = cancelar_seleccion(letras, presionadas)
 
-        elif event in tablero_jugador:  # entra si se preciona una letra del atril
+        elif event in atril_jugador and not cambio:  # entra si se preciona una letra del atril
             print("Tipo: ", event)
-            if event_anterior in tablero_jugador:  # se fija si la letra anterior fue una del tablero para desbloquaer
+            if event_anterior in atril_jugador:  # se fija si la letra anterior fue una del tablero para desbloquaer
                 window.Element(event_anterior).Update(disabled=False)
                 # if (len(presionadas) == 0 and (not '7,7' in botones_usados) ):  # desbloquea botones de la matriz
                 #     presionadas.append('7,7')
@@ -349,9 +335,10 @@ def ventana_juego():
                     window.Element(event).Update(button_color=("black", "violet"))
                     bloquear_boton()
                     # print(presionadas)
+
         if event != "__TIMEOUT__":
             event_anterior = event
-        if not turnoEligido:
+        if not turno_elegido:
             print("turno de la maquina")
             print(atrilMaquina)
             # desbloquear_boton()
@@ -361,7 +348,7 @@ def ventana_juego():
             reponerFichas(atrilMaquina)
             # bloquear_boton()
 
-            turnoEligido = not turnoEligido
+            turno_elegido = not turno_elegido
             print(botones_usados)
 
         window['-DISPLAY-'].Update('{:02d}:{:02d}.{:02d}'.format((current_time // 100) // 60,
