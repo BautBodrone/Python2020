@@ -193,7 +193,7 @@ def abrir_configuracion():
     def retorno_cantidad_fichas(value):
         retorno = {}
         for x in range(ord("A"), ord("Z")+1):
-            retorno[chr(x)] = value[chr(x)]
+            retorno[chr(x)] = int(value[chr(x)])
         return retorno
 
     def retorno_valor_fichas(values):
