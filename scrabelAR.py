@@ -1,6 +1,7 @@
 import PySimpleGUI as sg
 import config as gui_configuracion
 import tableroDeJuego as juego
+import puntajes_GUI as puntajes
 
 '''Menú principal e inicio del programa. Desde acá se llama a todos los demás módulos'''
 
@@ -11,11 +12,13 @@ def abrirMain():
             sg.Text("ScrabblerAR", font=('arial', '95', 'bold'), justification="center", key="titulo")
         ],
         [
-            sg.Button("JUGAR", font=('arial', '20', 'bold'), size=(15, 1), key="jugar"),
+            sg.Button("JUGAR", font=('arial', '15', 'bold'), size=(15, 1), key="jugar"),
 
-            sg.Button("CONFIGURACION", font=('arial', '20', 'bold'), size=(15, 1), key="config"),
+            sg.Button("CONFIGURACION", font=('arial', '15', 'bold'), size=(15, 1), key="config"),
 
-            sg.Button("SALIR", font=('arial', '20', 'bold'), size=(15, 1), key="salir")
+            sg.Button("PUNTAJES", font=('arial', '15', 'bold'), size=(15, 1), key="puntaje"),
+
+            sg.Button("SALIR", font=('arial', '15', 'bold'), size=(15, 1), key="salir")
         ]
     ]
 
@@ -31,15 +34,23 @@ def abrirMain():
         if event is None or event == 'salir':
             break
 
-        if event == "config":
+        elif event == "config":
             window.Disappear()
             gui_configuracion.abrir_configuracion()
             window.Reappear()
 
-        if event == "jugar":
+        elif event == "jugar":
             window.Disappear()
             try:
                 juego.ventana_juego()
+            except:
+                print("sale")
+            window.Reappear()
+
+        else:
+            window.Disappear()
+            try:
+                puntajes.puntajes_GUI()
             except:
                 print("sale")
             window.Reappear()

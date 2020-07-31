@@ -6,6 +6,8 @@ def ventana_juego():
     from correccion_de_palabras import palabraValida
     from moduloIA import turno_pc
     from Configuracion import config_dictionary as configuracion
+    from Puntajes import puntajes as Puntajes
+    from datetime import datetime as fecha_y_hora
 
     user_config = configuracion.obtener_config()
     presionadas = []  # los cuadrantes que se seleccionaron del tablero
@@ -175,15 +177,40 @@ def ventana_juego():
         window2.Close()
         return event1
 
-    def fin_juego():
-        if puntajeTotal > puntajeMaquina:
-            sg.Popup("GANASTE!!! con: " + str(puntajeTotal) + " puntos contra: " + str(puntajeMaquina) + " de la maquina")
+    def toma_valores_atril(atril, valores):
+        suma = 0
+        for x in atril:
+            suma += valores[x]  # enviar valores como parametro
+        return suma
 
-        elif puntajeMaquina == puntajeTotal:
+
+    def fin_juego(puntaje_total,puntaje_maquina, atril_jugador, atril_maquina, valores):
+        atril_player=[]
+        for x in atril_jugador:
+            atril_player.append(str(window.Element(x).get_text()))
+        puntaje_total -= toma_valores_atril(atril_player, valores)
+        puntaje_maquina -= toma_valores_atril(atril_maquina, valores)
+
+        if puntaje_total > puntaje_maquina:
+            sg.Popup("GANASTE!!! con: " + str(puntaje_total) + " puntos contra: " + str(puntaje_maquina) + " de la maquina")
+
+
+        elif puntaje_maquina == puntaje_total:
             sg.Popup("Hubo empate")
 
         else:
-            sg.Popup("Gano la maquina con: " + str(puntajeMaquina) + " puntos contra: " + str(puntajeTotal) + " tuyos")
+            sg.Popup("Gano la maquina con: " + str(puntaje_maquina) + " puntos contra: " + str(puntaje_total) + " tuyos")
+
+        puntaje = Puntajes.obtener_puntajes()
+
+        if dificultad == "facil":
+            puntaje.facil.append([dificultad, puntaje_total, fecha_y_hora.now().strftime("%Y-%m-%d %H:%M:%S")])
+        elif dificultad == "medio":
+            puntaje.medio.append([dificultad, puntaje_total, fecha_y_hora.now().strftime("%Y-%m-%d %H:%M:%S")])
+        else:
+            puntaje.dificil.append([dificultad, puntaje_total, fecha_y_hora.now().strftime("%Y-%m-%d %H:%M:%S")])
+        puntaje.total.append([dificultad, puntaje_total, fecha_y_hora.now().strftime("%Y-%m-%d %H:%M:%S")])
+        Puntajes.guardar_configuracion(puntaje)
         window.close()
         return
 
@@ -375,10 +402,10 @@ def ventana_juego():
                                                                          (current_time // 100) % 60,
                                                                          current_time % 100))
             except IndexError:
-                fin_juego()
+                fin_juego(puntajeTotal,puntajeMaquina, atril_jugador, atrilMaquina,valores)
 
             except Exception:
-                fin_juego()
+                fin_juego(puntajeTotal,puntajeMaquina, atril_jugador, atrilMaquina,valores)
 
         window.close()
 
