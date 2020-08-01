@@ -214,16 +214,16 @@ def ventana_juego():
         window.close()
         return
 
-    if len(bolsa)< 20:
-        sg.PopupError("Minimo de letras permitodo es 20. Agregue mas y vuelva a intentar")
-    else:
-        evento = preguntar()
-        if evento == "continuar":
-            try:
-                raise
-            except:
-                sg.popup("no hay partida guardada")
-        elif (evento == "no continuar"):
+    evento = preguntar()
+    if evento == "continuar":
+        try:
+            raise
+        except:
+            sg.popup("no hay partida guardada")
+    elif (evento == "no continuar"):
+        if len(bolsa) < 20:
+            sg.PopupError("Minimo de letras permitodo es 20. Agregue mas y vuelva a intentar")
+        else:
             turno_elegido = random.choice(turno)
             inteligenciaArt = generarAtrilIA()
             matriz = generar_matriz()
@@ -257,157 +257,158 @@ def ventana_juego():
             puntajeTotal=0
             cambios_cantidad = 3
             # turnoEligido = random.choice(turno)
-        else:  # en caso de que el evento sea None
-            raise
-        while True:
-            try:
-                if not paused:
-                    if current_time < tiempo_total:
-                        current_time = int(round(time.time() * 100)) - start_time
-                    else:  # se termina el juego y se define al ganador
-                        raise Exception("TIMEOUT")
 
-                if not comenzar:
-                    event, values = window.Read()
-                else:
-                    event, values = window.Read(timeout=10)
+            while True:
+                try:
+                    if not paused:
+                        if current_time < tiempo_total:
+                            current_time = int(round(time.time() * 100)) - start_time
+                        else:  # se termina el juego y se define al ganador
+                            raise Exception("TIMEOUT")
 
-                if event in (None, 'salir'):  # si no recibe un evento se termina el programa
-                    window.Close()
-                    break
-
-                elif event is "comenzar":
-                    comenzar = not comenzar
-                    if comenzar:
-                        window.Element("comenzar").Update(text="pausar")
-                        start_time = start_time + time_as_int() - paused_time
+                    if not comenzar:
+                        event, values = window.Read()
                     else:
-                        paused_time = time_as_int()
-                        window.Element("comenzar").Update(text="comenzar")
-                    deshabiliatar = not deshabiliatar
-                    for x in range(1, 8):
-                        window.Element("letra" + str(x)).Update(disabled=deshabiliatar)
-                        if not iniciado:
-                            window.Element("letra" + str(x)).Update(text=buscar_ficha())
-                    iniciado = True
-                    window.Element("confirmar").Update(disabled=deshabiliatar)
-                    window.Element("cambiar").Update(disabled=deshabiliatar)
-                    window.Element("cancelar").Update(disabled=deshabiliatar)
+                        event, values = window.Read(timeout=10)
 
-                    # inicio timer
-                    # cambiar boton a pausar
+                    if event in (None, 'salir'):  # si no recibe un evento se termina el programa
+                        window.Close()
+                        break
 
-                elif event == "confirmar":  # ingresa la palabra en el tablero
-                    total = 0
-                    letra = ""
-                    for i in presionadas:
-                        letra += window.Element(i).GetText()
-                    print(letra)
-
-                    if verificarConfirmar(presionadas, letra):
-                        for clave in presionadas:  # suma el puntaje
-                            palabra = window.Element(clave).GetText()
-                            total += dic[clave].devolverValor(valores[
-                                                                  palabra])  # el diccionario de claves devuelve el boton con esa blave y el boton devuelve su valor
-                        print(total)
-                        puntajeTotal += total  # el puntaje real del jugador real
-                        text = str(puntajeTotal)
-                        window.FindElement('puntaje').Update("el puntaje es {}".format(text))  # muestra el puntaje
-                        if len(presionadas) > 0:
-                            for letra in letras:
-                                window.Element(letra).Update(text=buscar_ficha())
-                            #cambiar_fichas(letras, True)
-                        jugada.append("la letra formada es: {0} y su valor de la jugada es: {1}".format(letra.lower(), total))
-                        window.Element('jugada1').Update(jugada)
-                        botones_usados.extend(presionadas)
-                        presionadas = cancelar_seleccion(letras)
-                        letras = []  # se elimina todas las letras
-                        turno_elegido = not turno_elegido
-                        # elif ('7,7' in presionadas):
-                        #     for each in atril_jugador:  # cambia las letras del atril
-                        #         window.Element(each).Update(disabled=False)
-                        #     for clave in presionadas[1:]:  # vuelve al valor anterior a los botones selecionados de la matriz
-                        #         window.Element(clave).Update(button_color=dic[clave].color)
-                        #         window.Element(clave).Update(text="")
-                        #     presionadas = cancelar_seleccion(letras)
-                        #     letras = []
-                    else:
-                        for each in atril_jugador:  # cambia las letras del atril
-                            window.Element(each).Update(disabled=False)
-                        for clave in presionadas:  # vuelve al valor anterior a los botones selecionados de la matriz
-                            window.Element(clave).Update(button_color=dic[clave].color)
-                            window.Element(clave).Update(text="")
-                        presionadas = cancelar_seleccion(letras)
-                        letras = []
-
-                elif event == "cambiar":  # cambia las letras
-                    print("falta")
-
-
-                elif event == "cancelar":  # debuelve las palabras que puse en el tablero
-                    presionadas = cancelar_seleccion(letras, presionadas)
-
-                elif event in atril_jugador and not cambio:  # entra si se preciona una letra del atril
-                    print("Tipo: ", event)
-                    if event_anterior in atril_jugador:  # se fija si la letra anterior fue una del tablero para desbloquaer
-                        window.Element(event_anterior).Update(disabled=False)
-                        # if (len(presionadas) == 0 and (not '7,7' in botones_usados) ):  # desbloquea botones de la matriz
-                        #     presionadas.append('7,7')
-                        #     window.Element('7,7').Update(disabled=True,disabled_button_color=('black','red'))
-                        #     desbloquear_boton()
-                    elif len(presionadas) == 0:
-                        if window.Element("7,7").get_text() != "":
-                            desbloquear_boton()
+                    elif event is "comenzar":
+                        comenzar = not comenzar
+                        if comenzar:
+                            window.Element("comenzar").Update(text="pausar")
+                            start_time = start_time + time_as_int() - paused_time
                         else:
-                            print("habilitado")
-                            window.Element("7,7").Update(disabled=False)
-                            print(event)
-                    elif len(presionadas) < 2:  # desbloquea botones dependiendo de la pos
-                        desbloquear_der_abajo(presionadas[len(presionadas) - 1])
+                            paused_time = time_as_int()
+                            window.Element("comenzar").Update(text="comenzar")
+                        deshabiliatar = not deshabiliatar
+                        for x in range(1, 8):
+                            window.Element("letra" + str(x)).Update(disabled=deshabiliatar)
+                            if not iniciado:
+                                window.Element("letra" + str(x)).Update(text=buscar_ficha())
+                        iniciado = True
+                        window.Element("confirmar").Update(disabled=deshabiliatar)
+                        window.Element("cambiar").Update(disabled=deshabiliatar)
+                        window.Element("cancelar").Update(disabled=deshabiliatar)
+
+                        # inicio timer
+                        # cambiar boton a pausar
+
+                    elif event == "confirmar":  # ingresa la palabra en el tablero
+                        total = 0
+                        letra = ""
+                        for i in presionadas:
+                            letra += window.Element(i).GetText()
+                        print(letra)
+
+                        if verificarConfirmar(presionadas, letra):
+                            for clave in presionadas:  # suma el puntaje
+                                palabra = window.Element(clave).GetText()
+                                total += dic[clave].devolverValor(valores[
+                                                                      palabra])  # el diccionario de claves devuelve el boton con esa blave y el boton devuelve su valor
+                            print(total)
+                            puntajeTotal += total  # el puntaje real del jugador real
+                            text = str(puntajeTotal)
+                            window.FindElement('puntaje').Update("el puntaje es {}".format(text))  # muestra el puntaje
+                            if len(presionadas) > 0:
+                                for letra in letras:
+                                    window.Element(letra).Update(text=buscar_ficha())
+                                #cambiar_fichas(letras, True)
+                            jugada.append("la letra formada es: {0} y su valor de la jugada es: {1}".format(letra.lower(), total))
+                            window.Element('jugada1').Update(jugada)
+                            botones_usados.extend(presionadas)
+                            presionadas = cancelar_seleccion(letras)
+                            letras = []  # se elimina todas las letras
+                            turno_elegido = not turno_elegido
+                            # elif ('7,7' in presionadas):
+                            #     for each in atril_jugador:  # cambia las letras del atril
+                            #         window.Element(each).Update(disabled=False)
+                            #     for clave in presionadas[1:]:  # vuelve al valor anterior a los botones selecionados de la matriz
+                            #         window.Element(clave).Update(button_color=dic[clave].color)
+                            #         window.Element(clave).Update(text="")
+                            #     presionadas = cancelar_seleccion(letras)
+                            #     letras = []
+                        else:
+                            for each in atril_jugador:  # cambia las letras del atril
+                                window.Element(each).Update(disabled=False)
+                            for clave in presionadas:  # vuelve al valor anterior a los botones selecionados de la matriz
+                                window.Element(clave).Update(button_color=dic[clave].color)
+                                window.Element(clave).Update(text="")
+                            presionadas = cancelar_seleccion(letras)
+                            letras = []
+
+                    elif event == "cambiar":  # cambia las letras
+                        print("falta")
+
+
+                    elif event == "cancelar":  # debuelve las palabras que puse en el tablero
+                        presionadas = cancelar_seleccion(letras, presionadas)
+
+                    elif event in atril_jugador and not cambio:  # entra si se preciona una letra del atril
+                        print("Tipo: ", event)
+                        if event_anterior in atril_jugador:  # se fija si la letra anterior fue una del tablero para desbloquaer
+                            window.Element(event_anterior).Update(disabled=False)
+                            # if (len(presionadas) == 0 and (not '7,7' in botones_usados) ):  # desbloquea botones de la matriz
+                            #     presionadas.append('7,7')
+                            #     window.Element('7,7').Update(disabled=True,disabled_button_color=('black','red'))
+                            #     desbloquear_boton()
+                        elif len(presionadas) == 0:
+                            if window.Element("7,7").get_text() != "":
+                                desbloquear_boton()
+                            else:
+                                print("habilitado")
+                                window.Element("7,7").Update(disabled=False)
+                                print(event)
+                        elif len(presionadas) < 2:  # desbloquea botones dependiendo de la pos
+                            desbloquear_der_abajo(presionadas[len(presionadas) - 1])
+                        else:
+                            desbloquear_der_abajo(presionadas[len(presionadas) - 1], presionadas[len(presionadas) - 2])
+                        actual = window.Element(event).GetText()
+                        window.Element(event).Update(disabled=True, disabled_button_color=("silver", "silver"))
+                        letras.append(event)
+
                     else:
-                        desbloquear_der_abajo(presionadas[len(presionadas) - 1], presionadas[len(presionadas) - 2])
-                    actual = window.Element(event).GetText()
-                    window.Element(event).Update(disabled=True, disabled_button_color=("silver", "silver"))
-                    letras.append(event)
+                        if event in presionadas:
+                            presionadas.remove(event)
+                            window.Element(event).Update(text="")
+                            window.Element(event).Update(button_color=("black", "white"))
+                        else:  # entra si la celda del tablero esta en blanco
+                            if event != "__TIMEOUT__" and not event in botones_usados:
+                                presionadas.append(event)
+                                window.Element(event).Update(text=actual)
+                                window.Element(event).Update(button_color=("black", "violet"))
+                                bloquear_boton()
+                                # print(presionadas)
 
-                else:
-                    if event in presionadas:
-                        presionadas.remove(event)
-                        window.Element(event).Update(text="")
-                        window.Element(event).Update(button_color=("black", "white"))
-                    else:  # entra si la celda del tablero esta en blanco
-                        if event != "__TIMEOUT__" and not event in botones_usados:
-                            presionadas.append(event)
-                            window.Element(event).Update(text=actual)
-                            window.Element(event).Update(button_color=("black", "violet"))
-                            bloquear_boton()
-                            # print(presionadas)
+                    if event != "__TIMEOUT__":
+                        event_anterior = event
+                    if not turno_elegido:
+                        print("turno de la maquina")
+                        print(atrilMaquina)
+                        # desbloquear_boton()
+                        puntajeMaquina += float(turno_pc(atrilMaquina, botones_usados, window, dificultad, valores, dic))
+                        window.Element("puntajeIA").Update("el puntaje total es: {}".format(str(puntajeMaquina)))
+                        print(atrilMaquina)
+                        reponerFichas(atrilMaquina)
+                        # bloquear_boton()
 
-                if event != "__TIMEOUT__":
-                    event_anterior = event
-                if not turno_elegido:
-                    print("turno de la maquina")
-                    print(atrilMaquina)
-                    # desbloquear_boton()
-                    puntajeMaquina += float(turno_pc(atrilMaquina, botones_usados, window, dificultad, valores, dic))
-                    window.Element("puntajeIA").Update("el puntaje total es: {}".format(str(puntajeMaquina)))
-                    print(atrilMaquina)
-                    reponerFichas(atrilMaquina)
-                    # bloquear_boton()
+                        turno_elegido = not turno_elegido
+                        print(botones_usados)
 
-                    turno_elegido = not turno_elegido
-                    print(botones_usados)
+                    window['-DISPLAY-'].Update('{:02d}:{:02d}.{:02d}'.format((current_time // 100) // 60,
+                                                                             (current_time // 100) % 60,
+                                                                             current_time % 100))
+                except IndexError:
+                    fin_juego(puntajeTotal,puntajeMaquina, atril_jugador, atrilMaquina,valores)
 
-                window['-DISPLAY-'].Update('{:02d}:{:02d}.{:02d}'.format((current_time // 100) // 60,
-                                                                         (current_time // 100) % 60,
-                                                                         current_time % 100))
-            except IndexError:
-                fin_juego(puntajeTotal,puntajeMaquina, atril_jugador, atrilMaquina,valores)
+                except Exception:
+                    fin_juego(puntajeTotal,puntajeMaquina, atril_jugador, atrilMaquina,valores)
 
-            except Exception:
-                fin_juego(puntajeTotal,puntajeMaquina, atril_jugador, atrilMaquina,valores)
-
-        window.close()
+            window.close()
+    else:
+        print("no iniciado")
 
 if __name__ == "__main__":
     # try:
