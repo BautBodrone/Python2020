@@ -67,7 +67,7 @@ def ventana_juego():
             if anterior == "" or x_ant != x - 1:
                 window.Element(pos).Update(disabled=False)
 
-    def cambiar_fichas(lista_fichas):
+    def cambiar_fichas(lista_fichas, bolsa):
         if len(bolsa) >= len(lista_fichas):
             for ficha in lista_fichas:
                 cambio = window.Element(ficha).GetText()
@@ -183,6 +183,61 @@ def ventana_juego():
             suma += valores[x]  # enviar valores como parametro
         return suma
 
+    def popUp_cambio(atril_valores, bolsa, cambios_restantes):
+        """Permite cambiar las letras seleccionadas"""
+
+        botones_letras = []
+        for x in range(0, 7):
+            botones_letras.append(sg.Button(atril_valores[x], key=x+1, size=(4, 2)))
+
+        layout = [
+            [
+                sg.Text("Seleccione la letras a cambiar")
+            ],
+            botones_letras,
+            [
+                sg.Text("cambios restantes: "+str(cambios_restantes))
+            ],
+            [
+                sg.Button("Confirmar", key="cambio_confirmar"),
+                sg.Button("Cancelar", key="cambio_cancelar"),
+                sg.Button("Salir", key="cambio_salir")
+            ]
+        ]
+        if cambios_restantes==0:
+            sg.popup_error("No te quedan mas cambios")
+        else:
+            window_cambio = sg.Window("Cambiador de letras").Layout(layout)
+            letras_a_cambiar = []
+            letras_seleccion = []
+            while True:
+                event_cambio, values_cambio = window_cambio.Read()
+                try:
+                    if event_cambio == "cambio_confirmar":
+                        if len(letras_a_cambiar) > 0:
+                            cambiar_fichas(letras_a_cambiar, bolsa)
+                            window_cambio.close()
+                            cambios_restantes -= 1
+                            return cambios_restantes
+
+                    elif event_cambio in (None, "cambio_salir"):
+                        window_cambio.close()
+                        return cambios_restantes
+
+                    elif event_cambio == "cambio_cancelar":
+                        letras_a_cambiar = []
+                        for x in letras_seleccion:
+                            window_cambio.Element(x).Update(disabled=False)
+                        letras_seleccion = []
+
+                    elif event_cambio in range(0,8):
+                        letras_seleccion.append(event_cambio)
+                        letras_a_cambiar.append("letra"+str(event_cambio))
+                        window_cambio.Element(event_cambio).Update(disabled=True)
+
+                except Exception as e:
+                    print(e)
+
 
     def fin_juego(puntaje_total,puntaje_maquina, atril_jugador, atril_maquina, valores):
         atril_player=[]
@@ -246,9 +301,10 @@ def ventana_juego():
     letras = []  # las letras seleccionadas para colocarlas en el tablero
     actual = ''
     event_anterior = ""
-    atril_jugador = ("letra1", "letra2", "letra3", 'letra4', 'letra5', 'letra6', 'letra7')
+    atril_jugador = ("letra1", "letra2", "letra3", "letra4", "letra5", "letra6", "letra7")
     cambio = False
     comenzar = False
+    cambios_restantes=3
 
     deshabiliatar = True  # utilizado para habilitar atril
     iniciado = False  # utilizado una sola vez para buscar las 7 letras del atril
@@ -274,7 +330,7 @@ def ventana_juego():
             else:
                 event, values = window.Read(timeout=10)
 
-            if event in (None, 'salir'):  # si no recibe un evento se termina el programa
+            if event in (None, "salir"):  # si no recibe un evento se termina el programa
                 window.Close()
                 break
 
@@ -316,10 +372,10 @@ def ventana_juego():
                     text = str(puntajeTotal)
                     window.FindElement('puntaje').Update("el puntaje es {}".format(text))  # muestra el puntaje
                     if len(presionadas) > 0:
-                        for letra in letras:
-                            window.Element(letra).Update(text=buscar_ficha())
+                        for i in letras:
+                            window.Element(i).Update(text=buscar_ficha())
                         #cambiar_fichas(letras, True)
-                    jugada.append("la letra formada es: {0} y su valor de la jugada es: {1}".format(letra.lower(), total))
+                    jugada.append("la letra formada es: {0} y su valor de la jugada es: {1}".format(letra, total))
                     window.Element('jugada1').Update(jugada)
                     botones_usados.extend(presionadas)
                     presionadas = cancelar_seleccion(letras)
@@ -343,7 +399,10 @@ def ventana_juego():
                     letras = []
 
             elif event == "cambiar":  # cambia las letras
-                print("falta")
+                atril_cambio_valor=[]
+                for x in atril_jugador:
+                    atril_cambio_valor.append(window.Element(x).get_text())
+                cambios_restantes = popUp_cambio(atril_cambio_valor, bolsa, cambios_restantes)
 
 
             elif event == "cancelar":  # debuelve las palabras que puse en el tablero
