@@ -1,7 +1,8 @@
 import PySimpleGUI as sg
+
 import config as gui_configuracion
-import tableroDeJuego as juego
 import puntajes_GUI as puntajes
+import tableroDeJuego as juego
 
 '''Menú principal e inicio del programa. Desde acá se llama a todos los demás módulos'''
 
@@ -9,24 +10,24 @@ import puntajes_GUI as puntajes
 def abrirMain():
     layout = [
         [
-            sg.Text("ScrabblerAR", font=('arial', '95', 'bold'), justification="center", key="titulo")
+            sg.Text("ScrabblerAR", font=("arial", "95", "bold"), justification="center", key="titulo")
         ],
         [
-            sg.Button("JUGAR", font=('arial', '15', 'bold'), size=(15, 1), key="jugar"),
+            sg.Button("JUGAR", font=("arial", "15", "bold"), size=(15, 1), key="jugar"),
 
-            sg.Button("CONFIGURACION", font=('arial', '15', 'bold'), size=(15, 1), key="config"),
+            sg.Button("CONFIGURACION", font=("arial", "15", "bold"), size=(15, 1), key="config"),
 
-            sg.Button("PUNTAJES", font=('arial', '15', 'bold'), size=(15, 1), key="puntaje"),
+            sg.Button("PUNTAJES", font=("arial", "15", "bold"), size=(15, 1), key="puntaje"),
 
-            sg.Button("SALIR", font=('arial', '15', 'bold'), size=(15, 1), key="salir")
+            sg.Button("SALIR", font=("arial", "15", "bold"), size=(15, 1), key="salir")
         ]
     ]
 
     window = sg.Window(
-                        "ScrabblerAR",
-                        resizable=False,
-                        size=(800, 600)
-                    ).Layout(layout)
+        "ScrabblerAR",
+        resizable=False,
+        size=(800, 600)
+    ).Layout(layout)
 
     while True:
         event, values = window.Read()
@@ -56,5 +57,5 @@ def abrirMain():
             window.Reappear()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     abrirMain()
