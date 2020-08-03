@@ -8,6 +8,8 @@ def ventana_juego():
     from Configuracion import config_dictionary as configuracion
     from Puntajes import puntajes as Puntajes
     from datetime import datetime as fecha_y_hora
+    import json
+    jugada=[]
 
     user_config = configuracion.obtener_config()
     presionadas = []  # los cuadrantes que se seleccionaron del tablero
@@ -22,9 +24,14 @@ def ventana_juego():
     bolsa = user_config.convertir_en_bolsa()  # busca todas las letras q se van a jugar en la configuracion
     tiempo_total = user_config.tiempo * 6000
     dificultad = user_config.dificultad
+    atril_jugador = ("letra1", "letra2", "letra3", "letra4", "letra5", "letra6", "letra7")
     print("Letras")
     print(bolsa)
-    exception_bloqueo=["comenzar", "salir", "pausar"]
+    exception_bloqueo = ["comenzar", "salir", "pausar", "posponer"]
+    letras_del_jugador = []
+    clavesMaquina = dict()
+    clavesJugador = dict()
+    jugadasMaquina=[]
 
     def desbloquear_boton():
         """desbloquea todos los cuadrantes"""
@@ -92,33 +99,72 @@ def ventana_juego():
             window.Element(clave).Update(disabled=False)
         return []
 
-    def generar_matriz(N=15):
+    def generar_matriz(dificultad,clavesMaquina="", clavesJugador="", N=15):
         """Genera una matriz de N filas y N columnas"""
-        matriz = []
-        for y in range(N):
-            linea = []
-            for x in range(N):
-                clave = str(x) + "," + str(y)
-                bot = boton.Boton()
-                bot.asignarColor(y, x, dificultad)
-                linea.append(
-                    sg.Button(
-                        "",
-                        key=clave,
-                        disabled=True,
-                        font='Courier 10',
-                        size=(4, 2) if N <= 12 else (4, 2),
-                        button_color=bot.color,
-                        pad=(0, 0)
-                    ),
-                )
-                dic[clave] = bot
+        if(clavesMaquina == ""):
+            matriz = []
+            for y in range(N):
+                linea = []
+                for x in range(N):
+                    clave = str(x) + "," + str(y)
+                    bot = boton.Boton()
+                    bot.asignarColor(y, x, dificultad)
+                    linea.append(
+                        sg.Button(
+                            "",
+                            key=clave,
+                            disabled=True,
+                            font='Courier 10',
+                            size=(4, 2) if N <= 12 else (4, 2),
+                            button_color=bot.color,
+                            pad=(0, 0)
+                        ),
+                    )
+                    dic[clave] = bot
+                matriz.append(linea)
+            linea = [
+                sg.Submit("comenzar", key="comenzar", size=(9, 2)),
+                sg.Submit("salir", key="salir", size=(9, 2)),
+                sg.Submit("posponer", key="posponer", size=(9, 2), disabled=True)
+            ]
             matriz.append(linea)
-        linea = [
-            sg.Submit("comenzar", key="comenzar", size=(9, 2)),
-            sg.Submit("salir", key="salir", size=(9, 2)),
-        ]
-        matriz.append(linea)
+        else:
+            matriz = []
+            for y in range(N):
+                linea = []
+                for x in range(N):
+                    clave = str(x) + "," + str(y)
+                    if (clave in clavesMaquina.keys()):
+                        bot = boton.Boton()
+                        bot.colorNuevo(("black", "violet"))
+                        le=clavesMaquina[clave]
+                    elif (clave in clavesJugador.keys()):
+                        bot = boton.Boton()
+                        bot.colorNuevo(("black","purple"))
+                        le=clavesJugador[clave]
+                    else:
+                        bot = boton.Boton()
+                        bot.asignarColor(y, x, dificultad)
+                        le=""
+                    linea.append(
+                        sg.Button(
+                            le,
+                            key=clave,
+                            disabled=True,
+                            font='Courier 10',
+                            size=(4, 2) if N <= 12 else (4, 2),
+                            button_color=bot.color,
+                            pad=(0, 0)
+                        ),
+                    )
+                    dic[clave] = bot
+                matriz.append(linea)
+            linea = [
+                sg.Submit("comenzar", key="comenzar", size=(9, 2)),
+                sg.Submit("salir", key="salir", size=(9, 2)),
+                sg.Submit("posponer", key="posponer", size=(9, 2), disabled=True)
+            ]
+            matriz.append(linea)
         return matriz
 
     def crear_atril(nombre):
@@ -128,22 +174,40 @@ def ventana_juego():
             atril_l.append(boton)
         return atril_l
 
-    def crear_izquierda():
-        return ([crear_atril("letra"),
-                 [sg.Listbox(values=[], key='jugada1', size=(50, 10))],
-                 [sg.Text("el puntaje es 0", key="puntaje", size=(20, 1))],
-                 [sg.Text('', size=(8, 2), font=("Helvetica", 20), justification="center", key="-DISPLAY-")],
-                 [
-                     sg.Submit("Seleccionar Palabra", key="confirmar", disabled=True),
-                     sg.Submit("Cambiar Letra", key="cambiar", disabled=True),
-                     sg.Submit("Cancelar seleccion", key="cancelar", disabled=True)
-                 ]
-                 ])
+    def crear_izquierda(jugada="",puntaje=""):
+        if(jugada == ""):
+            return ([crear_atril("letra"),
+                     [sg.Listbox(values=[], key='jugada1', size=(50, 10))],
+                     [sg.Text("el puntaje es 0", key="puntaje", size=(20, 1))],
+                     [sg.Text('', size=(8, 2), font=("Helvetica", 20), justification="center", key="-DISPLAY-")],
+                     [
+                         sg.Submit("Seleccionar Palabra", key="confirmar", disabled=True),
+                         sg.Submit("Cambiar Letra", key="cambiar", disabled=True),
+                         sg.Submit("Cancelar seleccion", key="cancelar", disabled=True)
+                     ]
+                     ])
+        else:
+            return ([crear_atril("letra"),
+                     [sg.Listbox(values=jugada, key='jugada1', size=(50, 10))],
+                     [sg.Text("el puntaje es "+str(puntaje), key="puntaje", size=(20, 1))],
+                     [sg.Text('', size=(8, 2), font=("Helvetica", 20), justification="center", key="-DISPLAY-")],
+                     [
+                         sg.Submit("Seleccionar Palabra", key="confirmar", disabled=True),
+                         sg.Submit("Cambiar Letra", key="cambiar", disabled=True),
+                         sg.Submit("Cancelar seleccion", key="cancelar", disabled=True)
+                     ]
+                     ])
 
-    def generarAtrilIA():  # se puede atomatizar
+    def generarAtrilIA(jugadas="",puntaje=""):  # se puede atomatizar
         """se muesta el puntaje y el atril del jugador IA"""
-        return ([crear_atril("bot"), [sg.Listbox(values=[], key="jugada2", size=(50, 10))]
-            , [sg.Text("el puntaje es 0", key="puntajeIA", size=(20, 1))], ])
+        if(puntaje == ""):
+            ext=[[sg.Listbox(values=[], key="jugada2", size=(50, 10))],[sg.Text("el puntaje es 0", key="puntajeIA", size=(20, 1))]]
+        else:
+            print(jugadas)
+            ext = [[sg.Listbox(values=jugadas, key="jugada2", size=(50, 10))],[sg.Text("el puntaje es "+str(puntaje), key="puntajeIA", size=(20, 1))]]
+        list =[crear_atril("bot")]
+        list.extend(ext)
+        return list
 
     def verificarConfirmar(list, l):
         """se pregunta si todo esta bien para insertar la palabras"""
@@ -182,6 +246,18 @@ def ventana_juego():
         for x in atril:
             suma += valores[x]  # enviar valores como parametro
         return suma
+
+    def guardar(**kwargs):
+        print(kwargs)
+        archivo = open("guardar\jugadaGuardada", "w")
+        json.dump(kwargs, archivo)
+        archivo.close()
+
+    def retomarPartida(datos):
+        list=[]
+        for each in range(10,26):
+            list.append(datos["guardar"+str(each)])
+        return list
 
     def popUp_cambio(atril_valores, bolsa, cambios_restantes):
         """Permite cambiar las letras seleccionadas"""
@@ -272,8 +348,27 @@ def ventana_juego():
     evento = preguntar()
     if evento == "continuar":
         try:
-            raise
-        except:
+            archivo = open("guardar\jugadaGuardada", "r")
+            datos = json.load(archivo)
+            print("deberia estar vacio")
+            jugada = datos["guardar0"]
+            print(jugada)
+            print(jugada)
+            letras = datos["guardar1"]
+            atrilMaquina = datos["guardar2"]
+            clavesJugador = datos["guardar3"]
+            clavesMaquina = datos["guardar4"]
+            jugadasMaquina = datos["guardar5"]
+            bolsa = datos["guardar6"]
+            valores = datos["guardar7"]
+            botones_usados = datos["guardar8"]
+            letras_del_jugador = datos["guardar9"]
+            turno_elegido, deficultad, event_anterior, puntajeMaquina, puntajeTotal, cambios_cantidad, current_time, tiempo_total, paused_time, paused, start_time, comenzar, iniciado, deshabiliatar, cambio, cambios_restantes = retomarPartida(datos)
+            inteligenciaArt = generarAtrilIA(jugadasMaquina, puntajeMaquina)
+            matriz = generar_matriz(dificultad, clavesMaquina, clavesJugador)
+            columna_derecha = matriz
+            columna_izquierda = crear_izquierda(jugada, puntajeTotal)
+        except FileNotFoundError:
             sg.popup("no hay partida guardada")
     elif (evento == "no continuar"):
         if len(bolsa) < 20:
@@ -282,9 +377,21 @@ def ventana_juego():
         else:
             turno_elegido = random.choice(turno)
             inteligenciaArt = generarAtrilIA()
-            matriz = generar_matriz()
+            matriz = generar_matriz(dificultad)
             columna_derecha = matriz
             columna_izquierda = crear_izquierda()
+
+            cambios_restantes = 3
+            cambios_cantidad = 3
+
+            current_time, paused_time, paused = 0, time_as_int(), False  # variables del timer
+            start_time = time_as_int()
+            atrilMaquina = fichaAtrilAI()  # se crea el atril de la maquina
+
+            puntajeMaquina = 0
+            puntajeTotal = 0
+            actual = ''
+            event_anterior = ""
     else:
         exit()
 
@@ -296,26 +403,20 @@ def ventana_juego():
     ]
 
     window = sg.Window("ScrabbleAR").Layout(layout)
-    jugada = []
 
     letras = []  # las letras seleccionadas para colocarlas en el tablero
-    actual = ''
-    event_anterior = ""
-    atril_jugador = ("letra1", "letra2", "letra3", "letra4", "letra5", "letra6", "letra7")
+
+
+
     cambio = False
     comenzar = False
-    cambios_restantes=3
+
 
     deshabiliatar = True  # utilizado para habilitar atril
     iniciado = False  # utilizado una sola vez para buscar las 7 letras del atril
+    print("-"*20)
+    print(cambios_cantidad)
 
-    current_time, paused_time, paused = 0, time_as_int(), False  # variables del timer
-    start_time = time_as_int()
-    atrilMaquina = fichaAtrilAI()  # se crea el atril de la maquina
-    puntajeMaquina=0
-    puntajeTotal=0
-    cambios_cantidad = 3
-    # turnoEligido = random.choice(turno)
 
     while True:
         try:
@@ -343,18 +444,49 @@ def ventana_juego():
                     paused_time = time_as_int()
                     window.Element("comenzar").Update(text="comenzar")
                 deshabiliatar = not deshabiliatar
-                for x in range(1, 8):
-                    window.Element("letra" + str(x)).Update(disabled=deshabiliatar)
-                    if not iniciado:
-                        window.Element("letra" + str(x)).Update(text=buscar_ficha())
+                if evento != "continuar":
+                    for x in range(1, 8):
+                        window.Element("letra" + str(x)).Update(disabled=deshabiliatar)
+                        if not iniciado:
+                            window.Element("letra" + str(x)).Update(text=buscar_ficha())
+                else:
+                    paused = not paused
+                    x = 1
+                    print(x)
+                    print(letras_del_jugador)
+
+                    for i in letras_del_jugador:
+                        window.Element("letra" + str(x)).Update(disabled=deshabiliatar)
+                        if not iniciado:
+                            window.Element("letra" + str(x)).Update(text=i)
+                        x += 1
+                    letras_del_jugador = []
                 iniciado = True
                 window.Element("confirmar").Update(disabled=deshabiliatar)
                 window.Element("cambiar").Update(disabled=deshabiliatar)
                 window.Element("cancelar").Update(disabled=deshabiliatar)
+                window.Element("posponer").Update(disabled=deshabiliatar)
 
                 # inicio timer
                 # cambiar boton a pausar
+            elif event == "posponer":
+                paused = not paused
+                iniciado
+                paused_time = time_as_int()
+                for i in atril_jugador:
+                    letras_del_jugador.append(window.Element(i).GetText())
 
+                print(letras_del_jugador)
+                guardar(guardar0=jugada, guardar1=letras, guardar2=atrilMaquina, guardar3=clavesJugador,
+                        guardar4=clavesMaquina,
+                        guardar5=jugadasMaquina, guardar6=bolsa, guardar7=valores,
+                        guardar8=botones_usados, guardar9=letras_del_jugador, guardar10=turno_elegido,
+                        guardar11=dificultad,
+                        guardar12=event_anterior, guardar13=puntajeMaquina, guardar14=puntajeTotal,
+                        guardar15=cambios_cantidad, guardar16=current_time, guardar17=tiempo_total,
+                        guardar18=paused_time, guardar19=paused, guardar20=start_time, guardar21=comenzar,
+                        guardar22=iniciado, guardar23=deshabiliatar, guardar24=cambio, guardar25=cambios_restantes)
+                break
             elif event == "confirmar":  # ingresa la palabra en el tablero
                 total = 0
                 letra = ""
@@ -367,6 +499,7 @@ def ventana_juego():
                         palabra = window.Element(clave).GetText()
                         total += dic[clave].devolverValor(valores[
                                                               palabra])  # el diccionario de claves devuelve el boton con esa blave y el boton devuelve su valor
+                        clavesJugador[clave] = window.Element(clave).GetText()
                     print(total)
                     puntajeTotal += total  # el puntaje real del jugador real
                     text = str(puntajeTotal)
@@ -374,7 +507,7 @@ def ventana_juego():
                     if len(presionadas) > 0:
                         for i in letras:
                             window.Element(i).Update(text=buscar_ficha())
-                        #cambiar_fichas(letras, True)
+                        # cambiar_fichas(letras, True)
                     jugada.append("la letra formada es: {0} y su valor de la jugada es: {1}".format(letra, total))
                     window.Element('jugada1').Update(jugada)
                     botones_usados.extend(presionadas)
@@ -399,10 +532,11 @@ def ventana_juego():
                     letras = []
 
             elif event == "cambiar":  # cambia las letras
-                atril_cambio_valor=[]
+                atril_cambio_valor = []
                 for x in atril_jugador:
                     atril_cambio_valor.append(window.Element(x).get_text())
                 cambios_restantes = popUp_cambio(atril_cambio_valor, bolsa, cambios_restantes)
+                turno_elegido = not turno_elegido
 
 
             elif event == "cancelar":  # debuelve las palabras que puse en el tablero
@@ -450,7 +584,9 @@ def ventana_juego():
                 print("turno de la maquina")
                 print(atrilMaquina)
                 # desbloquear_boton()
-                puntajeMaquina += float(turno_pc(atrilMaquina, botones_usados, window, dificultad, valores, dic))
+                puntajeMaquina += float(
+                    turno_pc(atrilMaquina, botones_usados, window, dificultad, valores, dic, jugadasMaquina,
+                             clavesMaquina))
                 window.Element("puntajeIA").Update("el puntaje total es: {}".format(str(puntajeMaquina)))
                 print(atrilMaquina)
                 reponerFichas(atrilMaquina)
