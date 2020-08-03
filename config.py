@@ -1,5 +1,6 @@
 import PySimpleGUI as sg
 from Configuracion import config_dictionary as Configuracion
+import config as gui_configuracion
 
 
 def abrir_configuracion():
@@ -15,18 +16,16 @@ def abrir_configuracion():
                 lista.append([sg.Button(opcion.capitalize().replace("_", " "), size=(22, 1), key=opcion)])
 
         columna_izquierda = lista + [[
-            sg.Button("Guardar", size=(10, 1), key="Guardar", bind_return_key=True),
-            sg.Button("Salir", size=(10, 1), key="Salir", )
+            sg.Button("Salir", size=(22, 1), key="Salir", )
         ]]
 
         return columna_izquierda
 
-    def botones_por_defecto():
+    def botones_por_defecto(variante):
         """son solo estos tres botones en una version anteriro tenian otro funcionamiento"""
         return [
-            sg.Button("Confirmar", key="boton_confirmar"),
-            sg.Button("Por defecto", key="boton_por_defecto"),
-            sg.Button("Cancelar", button_color=("white", "red"), key="boton_cancelar")
+            sg.Button("Guardar", key="boton_confirmar"+str(variante)),
+            sg.Button("Por defecto", key="boton_por_defecto"+str(variante))
         ]
 
     def PopUp_confirmar(titulo, string):
@@ -34,7 +33,7 @@ def abrir_configuracion():
         El mensaje y título del Popup es personalizable"""
         layout = [
             [
-                sg.T(string)
+                sg.Text(string)
             ],
             [
                 sg.Button('Confirmar', key='boton_confirmar'),
@@ -45,7 +44,10 @@ def abrir_configuracion():
         window = sg.Window(titulo).Layout(layout)
         confirmar = window.Read()
         window.Close()
-        return confirmar
+        if confirmar[0] =="boton_confirmar":
+            return True
+        else:
+            return False
 
     def dificultad_y_valor_de_fichas(configuracion):
         """crea la layout para la pestaña/columna dificulta y valor de fichas"""
@@ -148,7 +150,7 @@ def abrir_configuracion():
 
         columna_valor_fichas = [[sg.Frame("Cambiar valor", valor_fichas_layout)]]
 
-        layout_dif_valor = [[sg.Column(columna_dif_tiempo), sg.Column(columna_valor_fichas)],botones_por_defecto()]
+        layout_dif_valor = [[sg.Column(columna_dif_tiempo), sg.Column(columna_valor_fichas)], botones_por_defecto(1)]
 
         return layout_dif_valor
 
@@ -180,7 +182,7 @@ def abrir_configuracion():
             x += 3
             lista_sliders.append(slider)
         cantidad_de_fichas_layout= lista_sliders
-        return [[sg.Frame("Cantidad de Ficha por Letra", cantidad_de_fichas_layout)], botones_por_defecto()]
+        return [[sg.Frame("Cantidad de Ficha por Letra", cantidad_de_fichas_layout)], botones_por_defecto(2)]
 
     def retorno_cantidad_fichas(value):
         """busca el valor de los slider y lo devuelve en forma de diccionario"""
@@ -219,35 +221,6 @@ def abrir_configuracion():
 
         return layout
 
-    def PopUp_guardar_y_salir():
-        """Mensaje que consulta al usuario si desea salir sin guardar o guardar antes de salir.
-        Retorna si se guardaron o no los cambios"""
-        layout = [
-            [
-                sg.Text("Hay cambios que no ha guardado, ¿Desea guardar los cambios antes de salir?")
-            ],
-            [
-                sg.Button("Guardar y salir", key="boton_confirmar"),
-                sg.Button("Salir", key="boton_cancelar"),
-            ]
-        ]
-
-        window = sg.Window("Cambios sin guardar").Layout(layout)
-        event, values = window.Read()
-        window.Close()
-
-        guardado = False
-
-        if event == "boton_confirmar":
-            guardado = Configuracion.guardar_configuracion(user_config)
-            if guardado:
-                sg.PopupOK("Los cambios se han guardado con éxito.")
-            else:
-                sg.PopupOK(
-                    "Un error ocurrió mientras intentábamos guardar la configuración. No se guardaron los cambios")
-
-        return guardado
-
     lista_de_opciones = [
         "dificultad_y_valor_de_fichas",
         "cantidad_de_fichas",
@@ -258,8 +231,6 @@ def abrir_configuracion():
     user_config = Configuracion.obtener_config()
     default_config = Configuracion.Configuracion()
 
-    guardado = True
-
     window = sg.Window("Configuracion").Layout(layout_principal(lista_de_opciones, user_config))
     while True:
 
@@ -267,8 +238,6 @@ def abrir_configuracion():
 
         # Salir de la configuración
         if event is None or event == "Salir":
-            if not guardado:
-                PopUp_guardar_y_salir(user_config)
             window.Close()
             break
 
@@ -287,12 +256,12 @@ def abrir_configuracion():
             window.Element("columna_cant_fichas").Update(visible=True)
             window.Element("columna_dificultad").Update(visible=False)
 
-        if event == "boton_por_defecto":
-
-            if PopUp_confirmar("Valores por defecto", "Continuar restablecerá todas las opciones de " +
-                               opcion_actual.capitalize().replace("_", " ") + " a sus valores por defecto."
-                                                                              "\n¿Seguro que desea continuar?"):
-
+        elif event in ("boton_por_defecto1", "boton_por_defecto2"):
+            if PopUp_confirmar("Valores por defecto",
+                                                    "Continuar restablecerá todas las opciones de "
+                                                    + opcion_actual.capitalize().replace("_", " ")
+                                                    + " a sus valores por defecto. ¿Seguro que desea continuar?"):
+                print("testing")
                 if opcion_actual == "dificultad_y_valor_de_fichas":
                     user_config.tiempo = default_config.tiempo
                     user_config.dificultad = default_config.dificultad
@@ -302,9 +271,10 @@ def abrir_configuracion():
                     user_config.cantidad_fichas = default_config.cantidad_fichas
 
                 sg.PopupOK("Valores por defecto reestablecidos.")
+                window.Close()
+                gui_configuracion.abrir_configuracion()
 
-        elif event == "boton_confirmar":
-            guardado = False
+        elif event in ("boton_confirmar1", "boton_confirmar2"):
 
             if opcion_actual == "cantidad_de_fichas":
                 user_config.cantidad_fichas = retorno_cantidad_fichas(values)
@@ -319,7 +289,6 @@ def abrir_configuracion():
                     user_config.dificultad = "dificil"
                 user_config.tiempo = values ["cant_minutos"]
 
-        elif event == "Guardar":
             guardado = Configuracion.guardar_configuracion(user_config)
 
             if guardado:
@@ -328,6 +297,8 @@ def abrir_configuracion():
                 sg.PopupOK("Un error ocurrió mientras intentábamos guardar la configuración."
                            " No se guardaron los cambios")
 
+            window.Close()
+            gui_configuracion.abrir_configuracion()
 
 if __name__ == "__main__":
     abrir_configuracion()

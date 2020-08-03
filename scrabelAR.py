@@ -8,6 +8,7 @@ import tableroDeJuego as juego
 
 
 def abrirMain():
+    sg.theme("DarkTeal")
     layout = [
         [
             sg.Text("ScrabblerAR", font=("arial", "95", "bold"), justification="center", key="titulo")
