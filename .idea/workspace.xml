@@ -2,9 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="03777fbc-c101-4147-84f7-908ca62d1dfd" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/guardar/jugadaGuardada" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/boton.py" beforeDir="false" afterPath="$PROJECT_DIR$/boton.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Configuracion/config.json" beforeDir="false" afterPath="$PROJECT_DIR$/Configuracion/config.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Puntajes/puntajes.json" beforeDir="false" afterPath="$PROJECT_DIR$/Puntajes/puntajes.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/moduloIA.py" beforeDir="false" afterPath="$PROJECT_DIR$/moduloIA.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scrabelAR.py" beforeDir="false" afterPath="$PROJECT_DIR$/scrabelAR.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tableroDeJuego.py" beforeDir="false" afterPath="$PROJECT_DIR$/tableroDeJuego.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

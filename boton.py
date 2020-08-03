@@ -31,11 +31,8 @@ class Boton:
     def devolverValor(self, v):
         """devuelve el valor del boton"""
         return self._valor(v)
-    def colorNuevo(self,color):
-        self._color=color
 
     @property
-
     def color(self):
         """es un getter"""
         return self._color
