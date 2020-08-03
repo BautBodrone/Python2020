@@ -1,6 +1,5 @@
 from buscador_palabra import buscar_palabra
 import random
-jugada= []
 dic=dict()
 dic['facil']=2
 dic['medio']=3
@@ -13,7 +12,7 @@ def devolverString(x, y):
 
 
 
-def primera_jugada(fichas, window, dificultad,letrasT, valores, valor_boton):
+def primera_jugada(fichas, window, dificultad,letrasT, valores, valor_boton,jugada,claves):
     palabra = buscar_palabra(fichas, dificultad)
     puntos=0
     x,y=7,7
@@ -25,6 +24,8 @@ def primera_jugada(fichas, window, dificultad,letrasT, valores, valor_boton):
             window.Element(clave).Update(text = i)
             window.Element(clave).Update(disabled = True, button_color=("black","purple"))
             fichas.remove(i)
+            claves[clave]=i
+
             y+=1
             letrasT.append(clave)
     else:
@@ -34,6 +35,7 @@ def primera_jugada(fichas, window, dificultad,letrasT, valores, valor_boton):
             window.Element(clave).Update(text = i)
             window.Element(clave).Update(disabled = True , button_color=("black","purple"))
             fichas.remove(i)
+            claves[clave] = i
             x+=1
             letrasT.append(clave)
     jugada.append("la letra formada es: {0} y su valor de la jugada es: {1}".format(palabra, puntos))
@@ -41,7 +43,7 @@ def primera_jugada(fichas, window, dificultad,letrasT, valores, valor_boton):
 
     return puntos
 
-def se_sigue(fichas, letrast, dificultad, window, valores, valor_boton):
+def se_sigue(fichas, letrast, dificultad, window, valores, valor_boton,jugada,claves):
     n=0
     ok= False
     puntos=0
@@ -76,6 +78,7 @@ def se_sigue(fichas, letrast, dificultad, window, valores, valor_boton):
                     if len(letras_dic) >= dic[dificultad]:# si el tamaño es acorde a la dificultad pone la letra
                         for i in letras_dic.keys():
                             letrast.append(i)
+                            claves[i] = letras_dic[i]
                             puntos+=valor_boton[i].devolverValor(valores[letras_dic[i]])
                             window.Element(i).Update(text=letras_dic[i], button_color=("black","purple"))
                             fichas.remove(letras_dic[i])
@@ -105,6 +108,7 @@ def se_sigue(fichas, letrast, dificultad, window, valores, valor_boton):
                             letrast.append(i)
                             puntos += valor_boton[i].devolverValor(valores[letras_dic[i]])
                             window.Element(i).Update(text=letras_dic[i], button_color=("black", "purple"))
+                            claves[i] = letras_dic[i]
                         jugada.append("la letra formada es: {0} y su valor de la jugada es: {1}".format(palabra, puntos))
                         window.Element("jugada2").update(jugada)
                         ok=True
@@ -119,10 +123,10 @@ def se_sigue(fichas, letrast, dificultad, window, valores, valor_boton):
 
     return puntos
 
-def turno_pc(fichas, letrasT, window, dificultad, valores, valor_boton ):
+def turno_pc(fichas, letrasT, window, dificultad, valores, valor_boton,jugada,claves ):
     if len(letrasT) == 0:#en el caso de no sea 0 es porque no hay ninguna palabra puesta y la palabra se pone el 77
-        puntaje=primera_jugada(fichas, window, dificultad, letrasT, valores, valor_boton)
+        puntaje=primera_jugada(fichas, window, dificultad, letrasT, valores, valor_boton,jugada,claves)
         return puntaje
     else:
-        puntaje = se_sigue(fichas, letrasT, dificultad,window, valores, valor_boton)
+        puntaje = se_sigue(fichas, letrasT, dificultad,window, valores, valor_boton,jugada,claves)
         return puntaje
