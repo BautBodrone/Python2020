@@ -260,57 +260,55 @@ def ventana_juego():
         """Permite cambiar las letras seleccionadas"""
 
         botones_letras = []
-        if cambios_restantes==0:
-            sg.popup_error("No te quedan mas cambios")
-        else:
-            for x in range(0, 7):
-                botones_letras.append(sg.Button(atril_valores[x], key=x+1, size=(4, 2)))
 
-            layout = [
-                [
-                    sg.Text("Seleccione la letras a cambiar")
-                ],
-                botones_letras,
-                [
-                    sg.Text("cambios restantes: "+str(cambios_restantes))
-                ],
-                [
-                    sg.Button("Confirmar", key="cambio_confirmar"),
-                    sg.Button("Cancelar", key="cambio_cancelar"),
-                    sg.Button("Salir", key="cambio_salir")
-                ]
+        for x in range(0, 7):
+            botones_letras.append(sg.Button(atril_valores[x], key=x+1, size=(4, 2)))
+
+        layout = [
+            [
+                sg.Text("Seleccione la letras a cambiar")
+            ],
+            botones_letras,
+            [
+                sg.Text("cambios restantes: "+str(cambios_restantes))
+            ],
+            [
+                sg.Button("Confirmar", key="cambio_confirmar"),
+                sg.Button("Cancelar", key="cambio_cancelar"),
+                sg.Button("Salir", key="cambio_salir")
             ]
+        ]
 
-            window_cambio = sg.Window("Cambiador de letras").Layout(layout)
-            letras_a_cambiar = []
-            letras_seleccion = []
-            while True:
-                event_cambio, values_cambio = window_cambio.Read()
-                try:
-                    if event_cambio == "cambio_confirmar":
-                        if len(letras_a_cambiar) > 0:
-                            cambiar_fichas(letras_a_cambiar, bolsa)
-                            window_cambio.Close()
-                            cambios_restantes -= 1
-                            return cambios_restantes
-
-                    elif event_cambio in (None, "cambio_salir"):
+        window_cambio = sg.Window("Cambiador de letras").Layout(layout)
+        letras_a_cambiar = []
+        letras_seleccion = []
+        while True:
+            event_cambio, values_cambio = window_cambio.Read()
+            try:
+                if event_cambio == "cambio_confirmar":
+                    if len(letras_a_cambiar) > 0:
+                        cambiar_fichas(letras_a_cambiar, bolsa)
                         window_cambio.Close()
-                        return cambios_restantes
+                        cambios_restantes -= 1
+                        return cambios_restantes, True
 
-                    elif event_cambio == "cambio_cancelar":
-                        letras_a_cambiar = []
-                        for x in letras_seleccion:
-                            window_cambio.Element(x).Update(disabled=False)
-                        letras_seleccion = []
+                elif event_cambio in (None, "cambio_salir"):
+                    window_cambio.Close()
+                    return cambios_restantes, False
 
-                    elif event_cambio in range(0,8):
-                        letras_seleccion.append(event_cambio)
-                        letras_a_cambiar.append("letra"+str(event_cambio))
-                        window_cambio.Element(event_cambio).Update(disabled=True)
+                elif event_cambio == "cambio_cancelar":
+                    letras_a_cambiar = []
+                    for x in letras_seleccion:
+                        window_cambio.Element(x).Update(disabled=False)
+                    letras_seleccion = []
 
-                except Exception as e:
-                    print(e)
+                elif event_cambio in range(0,8):
+                    letras_seleccion.append(event_cambio)
+                    letras_a_cambiar.append("letra"+str(event_cambio))
+                    window_cambio.Element(event_cambio).Update(disabled=True)
+
+            except Exception as e:
+                print(e)
 
     def fin_juego(puntaje_total,puntaje_maquina, atril_jugador, atril_maquina, valores):
         atril_player=[]
@@ -414,7 +412,7 @@ def ventana_juego():
                 if current_time < tiempo_total:
                     current_time = int(round(time.time() * 100)) - start_time
                 else:  # se termina el juego y se define al ganador
-                    raise Exception("TIMEOUT")
+                    raise TimeoutError
 
             if not comenzar:
                 event, values = window.Read()
@@ -512,12 +510,15 @@ def ventana_juego():
                     letras = []
 
             elif event == "cambiar":  # cambia las letras
-                atril_cambio_valor = []
-                for x in atril_jugador:
-                    atril_cambio_valor.append(window.Element(x).GetText())
-                cambios_restantes = popUp_cambio(atril_cambio_valor, bolsa, cambios_restantes)
-                turno_elegido = not turno_elegido
-
+                if cambios_restantes == 0:
+                    sg.popup_error("No te quedan mas cambios")
+                else:
+                    atril_cambio_valor = []
+                    for x in atril_jugador:
+                        atril_cambio_valor.append(window.Element(x).GetText())
+                    cambios_restantes, cambio_realizado = popUp_cambio(atril_cambio_valor, bolsa, cambios_restantes)
+                    if cambio_realizado:
+                        turno_elegido = not turno_elegido
 
             elif event == "cancelar":  # debuelve las palabras que puse en el tablero
                 presionadas = cancelar_seleccion(letras, presionadas)
@@ -573,13 +574,13 @@ def ventana_juego():
             window.Element("-DISPLAY-").Update("{:02d}:{:02d}.{:02d}".format((current_time // 100) // 60,
                                                                      (current_time // 100) % 60,
                                                                      current_time % 100))
-        except IndexError:
-            fin_juego(puntajeTotal,puntajeMaquina, atril_jugador, atrilMaquina,valores)
 
-        except Exception:
-            fin_juego(puntajeTotal,puntajeMaquina, atril_jugador, atrilMaquina,valores)
+        except (IndexError, TimeoutError):
+             fin_juego(puntajeTotal, puntajeMaquina, atril_jugador, atrilMaquina, valores)
+             exit()
 
     window.Close()
+
 
 if __name__ == "__main__":
     # try:
