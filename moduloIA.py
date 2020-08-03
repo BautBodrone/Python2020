@@ -83,7 +83,7 @@ def se_sigue(fichas, letrast, dificultad, window, valores, valor_boton,jugada,cl
                             window.Element(i).Update(text=letras_dic[i], button_color=("black","purple"))
                             fichas.remove(letras_dic[i])
                         jugada.append("la letra formada es: {0} y su valor de la jugada es: {1}".format(palabra,puntos))
-                        window.Element("jugada2").update(jugada)
+                        window.Element("jugada2").Update(jugada)
                         print(palabra)
                         ok=True #con esto sale
                 else:
@@ -110,7 +110,7 @@ def se_sigue(fichas, letrast, dificultad, window, valores, valor_boton,jugada,cl
                             window.Element(i).Update(text=letras_dic[i], button_color=("black", "purple"))
                             claves[i] = letras_dic[i]
                         jugada.append("la letra formada es: {0} y su valor de la jugada es: {1}".format(palabra, puntos))
-                        window.Element("jugada2").update(jugada)
+                        window.Element("jugada2").Update(jugada)
                         ok=True
                 if (n < 50):
                     n += 1

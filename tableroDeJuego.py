@@ -25,26 +25,26 @@ def ventana_juego():
     tiempo_total = user_config.tiempo * 6000
     dificultad = user_config.dificultad
     atril_jugador = ("letra1", "letra2", "letra3", "letra4", "letra5", "letra6", "letra7")
-    print("Letras")
-    print(bolsa)
+
     exception_bloqueo = ["comenzar", "salir", "pausar", "posponer"]
     letras_del_jugador = []
     clavesMaquina = dict()
     clavesJugador = dict()
     jugadasMaquina=[]
+    tamanio_matriz=15
 
     def desbloquear_boton():
         """desbloquea todos los cuadrantes"""
         for lista in matriz:
             for boton in lista:
-                if boton.get_text() == "":
+                if boton.GetText() == "":
                     boton.Update(disabled=False)
 
     def bloquear_boton():
         """bloquea todos los cuadrantes"""
         for lista in matriz:
             for boton in lista:
-                if boton.get_text() not in exception_bloqueo:
+                if boton.GetText() not in exception_bloqueo:
                     boton.Update(disabled=True, disabled_button_color=("black", "gray"))
 
     def checkear_disponibilidad(posicion):
@@ -54,7 +54,7 @@ def ventana_juego():
         else:
             return False
 
-    def desbloquear_der_abajo(posicion, anterior=""):
+    def desbloquear_der_abajo(posicion, anterior="", tamanio=tamanio_matriz):
         """desbloquea los cuadrantes de abajo o de la derecha dependiendo de la forma que se esta escribiendo
             la palabra"""
         # hay que cambiar el 15 por el numero maximo de casilla de la matriz
@@ -66,11 +66,11 @@ def ventana_juego():
             x_ant, y_ant = int(anterior[0]), int(anterior[1])
             print(x, y)
             print(x_ant, y_ant)
-        if x < 14 and checkear_disponibilidad(pos):
+        if x < tamanio-1 and checkear_disponibilidad(pos):
             if anterior == "" or y_ant != y - 1:
                 window.Element(pos).Update(disabled=False)
         pos = str(x) + "," + str(y + 1)
-        if y < 14 and checkear_disponibilidad(pos):
+        if y < tamanio-1 and checkear_disponibilidad(pos):
             if anterior == "" or x_ant != x - 1:
                 window.Element(pos).Update(disabled=False)
 
@@ -88,9 +88,6 @@ def ventana_juego():
         bolsa.remove(text)
         return text
 
-    def salir(e):
-        return e is None
-
     def cancelar_seleccion(letras, seleccion=[]):
         if len(seleccion) > 0:
             for clave in seleccion:
@@ -99,13 +96,13 @@ def ventana_juego():
             window.Element(clave).Update(disabled=False)
         return []
 
-    def generar_matriz(dificultad,clavesMaquina="", clavesJugador="", N=15):
+    def generar_matriz(dificultad,clavesMaquina="", clavesJugador="", tamanio=tamanio_matriz):
         """Genera una matriz de N filas y N columnas"""
         if(clavesMaquina == ""):
             matriz = []
-            for y in range(N):
+            for y in range(tamanio):
                 linea = []
-                for x in range(N):
+                for x in range(tamanio):
                     clave = str(x) + "," + str(y)
                     bot = boton.Boton()
                     bot.asignarColor(y, x, dificultad)
@@ -115,7 +112,7 @@ def ventana_juego():
                             key=clave,
                             disabled=True,
                             font='Courier 10',
-                            size=(4, 2) if N <= 12 else (4, 2),
+                            size=(4, 2),
                             button_color=bot.color,
                             pad=(0, 0)
                         ),
@@ -130,9 +127,9 @@ def ventana_juego():
             matriz.append(linea)
         else:
             matriz = []
-            for y in range(N):
+            for y in range(tamanio):
                 linea = []
-                for x in range(N):
+                for x in range(tamanio):
                     clave = str(x) + "," + str(y)
                     if (clave in clavesMaquina.keys()):
                         bot = boton.Boton()
@@ -152,7 +149,7 @@ def ventana_juego():
                             key=clave,
                             disabled=True,
                             font='Courier 10',
-                            size=(4, 2) if N <= 12 else (4, 2),
+                            size=(4, 2),
                             button_color=bot.color,
                             pad=(0, 0)
                         ),
@@ -160,9 +157,9 @@ def ventana_juego():
                     dic[clave] = bot
                 matriz.append(linea)
             linea = [
-                sg.Submit("comenzar", key="comenzar", size=(9, 2)),
-                sg.Submit("salir", key="salir", size=(9, 2)),
-                sg.Submit("posponer", key="posponer", size=(9, 2), disabled=True)
+                sg.Submit("Comenzar", key="comenzar", size=(9, 2)),
+                sg.Submit("Posponer", key="posponer", size=(9, 2), disabled=True),
+                sg.Submit("Salir", key="salir", size=(9, 2))
             ]
             matriz.append(linea)
         return matriz
@@ -174,8 +171,8 @@ def ventana_juego():
             atril_l.append(boton)
         return atril_l
 
-    def crear_izquierda(jugada="",puntaje=""):
-        if(jugada == ""):
+    def crear_derecha(jugada="",puntaje=""):
+        if jugada == "":
             return ([crear_atril("letra"),
                      [sg.Listbox(values=[], key='jugada1', size=(50, 10))],
                      [sg.Text("el puntaje es 0", key="puntaje", size=(20, 1))],
@@ -228,7 +225,7 @@ def ventana_juego():
         return l
 
     def reponerFichas(atrilMaquina):
-        while (len(atrilMaquina) != 7):
+        while len(atrilMaquina) != 7:
             atrilMaquina.append(buscar_ficha())
 
     def preguntar():
@@ -263,26 +260,27 @@ def ventana_juego():
         """Permite cambiar las letras seleccionadas"""
 
         botones_letras = []
-        for x in range(0, 7):
-            botones_letras.append(sg.Button(atril_valores[x], key=x+1, size=(4, 2)))
-
-        layout = [
-            [
-                sg.Text("Seleccione la letras a cambiar")
-            ],
-            botones_letras,
-            [
-                sg.Text("cambios restantes: "+str(cambios_restantes))
-            ],
-            [
-                sg.Button("Confirmar", key="cambio_confirmar"),
-                sg.Button("Cancelar", key="cambio_cancelar"),
-                sg.Button("Salir", key="cambio_salir")
-            ]
-        ]
         if cambios_restantes==0:
             sg.popup_error("No te quedan mas cambios")
         else:
+            for x in range(0, 7):
+                botones_letras.append(sg.Button(atril_valores[x], key=x+1, size=(4, 2)))
+
+            layout = [
+                [
+                    sg.Text("Seleccione la letras a cambiar")
+                ],
+                botones_letras,
+                [
+                    sg.Text("cambios restantes: "+str(cambios_restantes))
+                ],
+                [
+                    sg.Button("Confirmar", key="cambio_confirmar"),
+                    sg.Button("Cancelar", key="cambio_cancelar"),
+                    sg.Button("Salir", key="cambio_salir")
+                ]
+            ]
+
             window_cambio = sg.Window("Cambiador de letras").Layout(layout)
             letras_a_cambiar = []
             letras_seleccion = []
@@ -292,12 +290,12 @@ def ventana_juego():
                     if event_cambio == "cambio_confirmar":
                         if len(letras_a_cambiar) > 0:
                             cambiar_fichas(letras_a_cambiar, bolsa)
-                            window_cambio.close()
+                            window_cambio.Close()
                             cambios_restantes -= 1
                             return cambios_restantes
 
                     elif event_cambio in (None, "cambio_salir"):
-                        window_cambio.close()
+                        window_cambio.Close()
                         return cambios_restantes
 
                     elif event_cambio == "cambio_cancelar":
@@ -314,17 +312,15 @@ def ventana_juego():
                 except Exception as e:
                     print(e)
 
-
     def fin_juego(puntaje_total,puntaje_maquina, atril_jugador, atril_maquina, valores):
         atril_player=[]
         for x in atril_jugador:
-            atril_player.append(str(window.Element(x).get_text()))
+            atril_player.append(str(window.Element(x).GetText()))
         puntaje_total -= toma_valores_atril(atril_player, valores)
         puntaje_maquina -= toma_valores_atril(atril_maquina, valores)
 
         if puntaje_total > puntaje_maquina:
             sg.Popup("GANASTE!!! con: " + str(puntaje_total) + " puntos contra: " + str(puntaje_maquina) + " de la maquina")
-
 
         elif puntaje_maquina == puntaje_total:
             sg.Popup("Hubo empate")
@@ -342,7 +338,7 @@ def ventana_juego():
             puntaje.dificil.append([dificultad, puntaje_total, fecha_y_hora.now().strftime("%Y-%m-%d %H:%M:%S")])
         puntaje.total.append([dificultad, puntaje_total, fecha_y_hora.now().strftime("%Y-%m-%d %H:%M:%S")])
         Puntajes.guardar_configuracion(puntaje)
-        window.close()
+        window.Close()
         return
 
     evento = preguntar()
@@ -350,10 +346,7 @@ def ventana_juego():
         try:
             archivo = open("guardar\jugadaGuardada", "r")
             datos = json.load(archivo)
-            print("deberia estar vacio")
             jugada = datos["guardar0"]
-            print(jugada)
-            print(jugada)
             letras = datos["guardar1"]
             atrilMaquina = datos["guardar2"]
             clavesJugador = datos["guardar3"]
@@ -363,14 +356,16 @@ def ventana_juego():
             valores = datos["guardar7"]
             botones_usados = datos["guardar8"]
             letras_del_jugador = datos["guardar9"]
-            turno_elegido, deficultad, event_anterior, puntajeMaquina, puntajeTotal, cambios_cantidad, current_time, tiempo_total, paused_time, paused, start_time, comenzar, iniciado, deshabiliatar, cambio, cambios_restantes = retomarPartida(datos)
+            turno_elegido, deficultad, event_anterior, puntajeMaquina, puntajeTotal, cambios_cantidad, current_time\
+                , tiempo_total, paused_time, paused, start_time, comenzar, iniciado, deshabiliatar\
+                , cambio, cambios_restantes = retomarPartida(datos)
             inteligenciaArt = generarAtrilIA(jugadasMaquina, puntajeMaquina)
             matriz = generar_matriz(dificultad, clavesMaquina, clavesJugador)
-            columna_derecha = matriz
-            columna_izquierda = crear_izquierda(jugada, puntajeTotal)
+            columna_izquierda = matriz
+            columna_derecha = crear_derecha(jugada, puntajeTotal)
         except FileNotFoundError:
             sg.popup("no hay partida guardada")
-    elif (evento == "no continuar"):
+    elif evento == "no continuar":
         if len(bolsa) < 20:
             sg.PopupError("Minimo de letras permitodo es 20. Agregue mas y vuelva a intentar")
             exit()
@@ -378,8 +373,8 @@ def ventana_juego():
             turno_elegido = random.choice(turno)
             inteligenciaArt = generarAtrilIA()
             matriz = generar_matriz(dificultad)
-            columna_derecha = matriz
-            columna_izquierda = crear_izquierda()
+            columna_izquierda = matriz
+            columna_derecha = crear_derecha()
 
             cambios_restantes = 3
             cambios_cantidad = 3
@@ -398,24 +393,19 @@ def ventana_juego():
     layout = [
         [
             sg.Column(inteligenciaArt),
-            sg.Column(columna_derecha),
-            sg.Column(columna_izquierda)]
+            sg.Column(columna_izquierda),
+            sg.Column(columna_derecha)]
     ]
 
     window = sg.Window("ScrabbleAR").Layout(layout)
 
     letras = []  # las letras seleccionadas para colocarlas en el tablero
 
-
-
     cambio = False
     comenzar = False
 
-
     deshabiliatar = True  # utilizado para habilitar atril
     iniciado = False  # utilizado una sola vez para buscar las 7 letras del atril
-    print("-"*20)
-    print(cambios_cantidad)
 
 
     while True:
@@ -467,8 +457,6 @@ def ventana_juego():
                 window.Element("cancelar").Update(disabled=deshabiliatar)
                 window.Element("posponer").Update(disabled=deshabiliatar)
 
-                # inicio timer
-                # cambiar boton a pausar
             elif event == "posponer":
                 paused = not paused
                 iniciado
@@ -514,14 +502,6 @@ def ventana_juego():
                     presionadas = cancelar_seleccion(letras)
                     letras = []  # se elimina todas las letras
                     turno_elegido = not turno_elegido
-                    # elif ('7,7' in presionadas):
-                    #     for each in atril_jugador:  # cambia las letras del atril
-                    #         window.Element(each).Update(disabled=False)
-                    #     for clave in presionadas[1:]:  # vuelve al valor anterior a los botones selecionados de la matriz
-                    #         window.Element(clave).Update(button_color=dic[clave].color)
-                    #         window.Element(clave).Update(text="")
-                    #     presionadas = cancelar_seleccion(letras)
-                    #     letras = []
                 else:
                     for each in atril_jugador:  # cambia las letras del atril
                         window.Element(each).Update(disabled=False)
@@ -534,7 +514,7 @@ def ventana_juego():
             elif event == "cambiar":  # cambia las letras
                 atril_cambio_valor = []
                 for x in atril_jugador:
-                    atril_cambio_valor.append(window.Element(x).get_text())
+                    atril_cambio_valor.append(window.Element(x).GetText())
                 cambios_restantes = popUp_cambio(atril_cambio_valor, bolsa, cambios_restantes)
                 turno_elegido = not turno_elegido
 
@@ -546,12 +526,8 @@ def ventana_juego():
                 print("Tipo: ", event)
                 if event_anterior in atril_jugador:  # se fija si la letra anterior fue una del tablero para desbloquaer
                     window.Element(event_anterior).Update(disabled=False)
-                    # if (len(presionadas) == 0 and (not '7,7' in botones_usados) ):  # desbloquea botones de la matriz
-                    #     presionadas.append('7,7')
-                    #     window.Element('7,7').Update(disabled=True,disabled_button_color=('black','red'))
-                    #     desbloquear_boton()
                 elif len(presionadas) == 0:
-                    if window.Element("7,7").get_text() != "":
+                    if window.Element("7,7").GetText() != "":
                         desbloquear_boton()
                     else:
                         print("habilitado")
@@ -576,7 +552,6 @@ def ventana_juego():
                         window.Element(event).Update(text=actual)
                         window.Element(event).Update(button_color=("black", "violet"))
                         bloquear_boton()
-                        # print(presionadas)
 
             if event != "__TIMEOUT__":
                 event_anterior = event
@@ -595,7 +570,7 @@ def ventana_juego():
                 turno_elegido = not turno_elegido
                 print(botones_usados)
 
-            window['-DISPLAY-'].Update('{:02d}:{:02d}.{:02d}'.format((current_time // 100) // 60,
+            window.Element("-DISPLAY-").Update("{:02d}:{:02d}.{:02d}".format((current_time // 100) // 60,
                                                                      (current_time // 100) % 60,
                                                                      current_time % 100))
         except IndexError:
@@ -604,7 +579,7 @@ def ventana_juego():
         except Exception:
             fin_juego(puntajeTotal,puntajeMaquina, atril_jugador, atrilMaquina,valores)
 
-    window.close()
+    window.Close()
 
 if __name__ == "__main__":
     # try:
