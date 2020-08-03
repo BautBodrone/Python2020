@@ -9,16 +9,16 @@ import puntajes_GUI as puntajes
 def abrirMain():
     layout = [
         [
-            sg.Text("ScrabblerAR", font=('arial', '95', 'bold'), justification="center", key="titulo")
+            sg.Text("ScrabblerAR", font=("arial", "95", "bold"), justification="center", key="titulo")
         ],
         [
-            sg.Button("JUGAR", font=('arial', '15', 'bold'), size=(15, 1), key="jugar"),
+            sg.Button("JUGAR", font=("arial", "15", "bold"), size=(15, 1), key="jugar"),
 
-            sg.Button("CONFIGURACION", font=('arial', '15', 'bold'), size=(15, 1), key="config"),
+            sg.Button("CONFIGURACION", font=("arial", "15", "bold"), size=(15, 1), key="config"),
 
-            sg.Button("PUNTAJES", font=('arial', '15', 'bold'), size=(15, 1), key="puntaje"),
+            sg.Button("PUNTAJES", font=("arial", "15", "bold"), size=(15, 1), key="puntaje"),
 
-            sg.Button("SALIR", font=('arial', '15', 'bold'), size=(15, 1), key="salir")
+            sg.Button("SALIR", font=("arial", "15", "bold"), size=(15, 1), key="salir")
         ]
     ]
 
@@ -31,7 +31,7 @@ def abrirMain():
     while True:
         event, values = window.Read()
 
-        if event is None or event == 'salir':
+        if event is None or event == "salir":
             break
 
         elif event == "config":
@@ -56,5 +56,5 @@ def abrirMain():
             window.Reappear()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     abrirMain()

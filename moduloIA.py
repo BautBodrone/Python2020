@@ -37,7 +37,7 @@ def primera_jugada(fichas, window, dificultad,letrasT, valores, valor_boton):
             x+=1
             letrasT.append(clave)
     jugada.append("la letra formada es: {0} y su valor de la jugada es: {1}".format(palabra, puntos))
-    window.Element("jugada2").update(jugada)
+    window.Element("jugada2").Update(jugada)
 
     return puntos
 

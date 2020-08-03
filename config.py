@@ -1,4 +1,5 @@
 import PySimpleGUI as sg
+
 from Configuracion import config_dictionary as Configuracion
 
 
@@ -10,7 +11,8 @@ def abrir_configuracion():
         lista = []
         for opcion in opciones:
             if opcion == "dificultad_y_valor_de_fichas":
-                lista.append([sg.Button(opcion.capitalize().replace("_", " "), size=(22, 1), key=opcion, disabled=True)])
+                lista.append(
+                    [sg.Button(opcion.capitalize().replace("_", " "), size=(22, 1), key=opcion, disabled=True)])
             else:
                 lista.append([sg.Button(opcion.capitalize().replace("_", " "), size=(22, 1), key=opcion)])
 
@@ -36,8 +38,8 @@ def abrir_configuracion():
                 sg.T(string)
             ],
             [
-                sg.Button('Confirmar', key='boton_confirmar'),
-                sg.Button('Cancelar', key='boton_cancelar'),
+                sg.Button("Confirmar", key="boton_confirmar"),
+                sg.Button("Cancelar", key="boton_cancelar"),
             ]
         ]
 
@@ -47,21 +49,22 @@ def abrir_configuracion():
         return confirmar
 
     def dificultad_y_valor_de_fichas(configuracion):
+        """crea el layout de la pestaña/columna en la cual se puede cambiar la dificultad y el valor de fichas"""
 
-        def_facil=False
-        def_medio=False
-        def_dificil=False
+        def_facil = False
+        def_medio = False
+        def_dificil = False
 
         if configuracion.dificultad == "facil":
-            def_facil=True
+            def_facil = True
         elif configuracion.dificultad == "medio":
-            def_medio=True
+            def_medio = True
         else:
-            def_dificil=True
+            def_dificil = True
 
         dificultad_layout = [
             [
-                sg.Radio("Facil", "dificultad",default=def_facil, key="dificultad_facil",
+                sg.Radio("Facil", "dificultad", default=def_facil, key="dificultad_facil",
                          tooltip="Se puede colocar cualquier tipo de palabra"),
             ],
             [
@@ -83,7 +86,7 @@ def abrir_configuracion():
             )]
         ]
 
-        blanco= " "
+        blanco = " "
         columna_dif_tiempo = [
             [
                 sg.Frame("Dificultad", dificultad_layout)
@@ -100,42 +103,42 @@ def abrir_configuracion():
                                     size=(10, 20),
                                     key="valor_ficha1"
                                 )],
-                               [sg.Text("C, D, G", key="valor_text2"), sg.Text(blanco*24),
+                               [sg.Text("C, D, G", key="valor_text2"), sg.Text(blanco * 24),
                                 sg.Slider(
                                     default_value=configuracion.valor_fichas["C, D, G"],
                                     range=(2, 50), orientation="h",
                                     size=(10, 20),
                                     key="valor_ficha2"
                                 )],
-                               [sg.Text("M, B, P", key="valor_text3"), sg.Text(blanco*24),
+                               [sg.Text("M, B, P", key="valor_text3"), sg.Text(blanco * 24),
                                 sg.Slider(
                                     default_value=configuracion.valor_fichas["M, B, P"],
                                     range=(2, 50), orientation="h",
                                     size=(10, 20),
                                     key="valor_ficha3"
                                 )],
-                               [sg.Text("F, H, V, Y", key="valor_text4"), sg.Text(blanco*20),
+                               [sg.Text("F, H, V, Y", key="valor_text4"), sg.Text(blanco * 20),
                                 sg.Slider(
                                     default_value=configuracion.valor_fichas["F, H, V, Y"],
                                     range=(2, 50), orientation="h",
                                     size=(10, 20),
                                     key="valor_ficha4"
                                 )],
-                               [sg.Text("J", key="valor_text5"), sg.Text(blanco*34),
+                               [sg.Text("J", key="valor_text5"), sg.Text(blanco * 34),
                                 sg.Slider(
                                     default_value=configuracion.valor_fichas["J"],
                                     range=(2, 50), orientation="h",
                                     size=(10, 20),
                                     key="valor_ficha5"
                                 )],
-                               [sg.Text("K, LL, Ñ, Q, RR, W, X", key="valor_text6"), sg.Text(blanco*3),
+                               [sg.Text("K, LL, Ñ, Q, RR, W, X", key="valor_text6"), sg.Text(blanco * 3),
                                 sg.Slider(
                                     default_value=configuracion.valor_fichas["K, LL, Ñ, Q, RR, W, X"],
                                     range=(2, 50), orientation="h",
                                     size=(10, 20),
                                     key="valor_ficha6"
                                 )],
-                               [sg.Text("Z", key="valor_text7"), sg.Text(blanco*33),
+                               [sg.Text("Z", key="valor_text7"), sg.Text(blanco * 33),
                                 sg.Slider(
                                     default_value=configuracion.valor_fichas["Z"],
                                     range=(2, 50), orientation="h",
@@ -146,46 +149,46 @@ def abrir_configuracion():
 
         columna_valor_fichas = [[sg.Frame("Cambiar valor", valor_fichas_layout)]]
 
-        layout_dif_valor = [[sg.Column(columna_dif_tiempo), sg.Column(columna_valor_fichas)],botones_por_defecto()]
+        layout_dif_valor = [[sg.Column(columna_dif_tiempo), sg.Column(columna_valor_fichas)], botones_por_defecto()]
 
         return layout_dif_valor
 
-    def slider_cant_fichas(configuracion):
+    def cantidad_de_fichas(configuracion):
         """crea lineas que contiene 3 sliders cada una y lo agraga a una lista que retorna para ser mostrada"""
         lista_sliders = []
         x = ord("A")
         while x < ord("Z"):
-            if chr(x + 2) != "[": slider = [
-                sg.Text(chr(x) + ": "), sg.Slider(default_value=configuracion.cantidad_fichas[chr(x)],
-                                                  range=(0, 100), orientation="h",size=(10, 20), key=chr(x)
-                                                  ),
-                sg.Text(chr(x + 1) + ": "), sg.Slider(default_value=configuracion.cantidad_fichas[chr(x+1)],
-                                                      range=(0, 100), orientation="h", size=(10, 20), key=chr(x + 1)
+            if chr(x + 2) != "[":
+                slider = [
+                    sg.Text(chr(x) + ": "), sg.Slider(default_value=configuracion.cantidad_fichas[chr(x)],
+                                                      range=(0, 100), orientation="h", size=(10, 20), key=chr(x)
                                                       ),
-                sg.Text(chr(x + 2) + ": "), sg.Slider(default_value=configuracion.cantidad_fichas[chr(x+2)],
-                                                      range=(0, 100), orientation="h", size=(10, 20), key=chr(x + 2)
-                                                      )
+                    sg.Text(chr(x + 1) + ": "), sg.Slider(default_value=configuracion.cantidad_fichas[chr(x + 1)],
+                                                          range=(0, 100), orientation="h", size=(10, 20), key=chr(x + 1)
+                                                          ),
+                    sg.Text(chr(x + 2) + ": "), sg.Slider(default_value=configuracion.cantidad_fichas[chr(x + 2)],
+                                                          range=(0, 100), orientation="h", size=(10, 20), key=chr(x + 2)
+                                                          )
                 ]
-            else:slider = [
-                sg.Text(chr(x) + ": "), sg.Slider(default_value= configuracion.cantidad_fichas[chr(x)],
-                                                  range=(0, 100), orientation="h", size=(10, 20), key=chr(x)
-                                                  ),
-                sg.Text(chr(x + 1) + ": "), sg.Slider(default_value= configuracion.cantidad_fichas[chr(x+1)],
-                                                      range=(0, 100), orientation="h",size=(10, 20), key=chr(x + 1)
-                                                      )
-            ]
+            else:
+                slider = [
+                    sg.Text(chr(x) + ": "), sg.Slider(default_value=configuracion.cantidad_fichas[chr(x)],
+                                                      range=(0, 100), orientation="h", size=(10, 20), key=chr(x)
+                                                      ),
+                    sg.Text(chr(x + 1) + ": "), sg.Slider(default_value=configuracion.cantidad_fichas[chr(x + 1)],
+                                                          range=(0, 100), orientation="h", size=(10, 20), key=chr(x + 1)
+                                                          )
+                ]
 
             x += 3
             lista_sliders.append(slider)
-        return lista_sliders
-
-    def cantidad_de_fichas(configuracion):  # se puede implementar por codigo con un sumador de char+1
-        cantidad_de_fichas_layout = slider_cant_fichas(configuracion)
-        return [[sg.Frame("Cantidad de Ficha por Letra", cantidad_de_fichas_layout)],botones_por_defecto()]
+        cantidad_de_fichas_layout = lista_sliders
+        return [[sg.Frame("Cantidad de Ficha por Letra", cantidad_de_fichas_layout)], botones_por_defecto()]
 
     def retorno_cantidad_fichas(value):
+        """Busca el valor de los slider de cantidad de fichas y lo devuelve en forma de diccionario para ser guardado"""
         retorno = {}
-        for x in range(ord("A"), ord("Z")+1):
+        for x in range(ord("A"), ord("Z") + 1):
             retorno[chr(x)] = int(value[chr(x)])
         return retorno
 
@@ -205,30 +208,30 @@ def abrir_configuracion():
     def layout_principal(lista_de_opciones, configuracion):
         """Genera la Interfaz Gráfica de Configuracion"""
         layout = [
-            [  # Título
-                sg.Text("ScrabbleAR"),
+            [
+                sg.Text("ScrabbleAR", font=("arial", "80", "bold")),
             ],
             [sg.Text('_' * 88)],
             [
                 sg.Column(columna_izquierda(lista_de_opciones)),
                 sg.VSeperator(),
-                sg.Column(cantidad_de_fichas(configuracion),key="columna_cant_fichas", visible=False),
+                sg.Column(cantidad_de_fichas(configuracion), key="columna_cant_fichas", visible=False),
                 sg.Column(dificultad_y_valor_de_fichas(configuracion), key="columna_dificultad")
             ]
         ]
 
         return layout
 
-    def PopUp_guardar_y_salir(configuracion):
+    def PopUp_guardar_y_salir():
         """Mensaje que consulta al usuario si desea salir sin guardar o guardar antes de salir.
         Retorna si se guardaron o no los cambios"""
         layout = [
             [
-                sg.Text('Hay cambios que no ha guardado, ¿Desea guardar los cambios antes de salir?')
+                sg.Text("Hay cambios que no ha guardado, ¿Desea guardar los cambios antes de salir?")
             ],
             [
-                sg.Button('Guardar y salir', key='boton_confirmar'),
-                sg.Button('Salir', key='boton_cancelar'),
+                sg.Button("Guardar y salir", key="boton_confirmar"),
+                sg.Button("Salir", key="boton_cancelar"),
             ]
         ]
 
@@ -280,6 +283,7 @@ def abrir_configuracion():
             window.Element("columna_cant_fichas").Update(visible=False)
             window.Element("columna_dificultad").Update(visible=True)
 
+        # Opcion cantidad de fichas
         elif event == "cantidad_de_fichas":
             opcion_actual = event
             window.Element(event).Update(disabled=True)
@@ -287,11 +291,13 @@ def abrir_configuracion():
             window.Element("columna_cant_fichas").Update(visible=True)
             window.Element("columna_dificultad").Update(visible=False)
 
-        if event == 'boton_por_defecto':
+        # Opcion para retornar a defecto
+        if event == "boton_por_defecto":
 
             if PopUp_confirmar("Valores por defecto", "Continuar restablecerá todas las opciones de " +
-                               opcion_actual.capitalize().replace("_", " ") + " a sus valores por defecto."
-                                                                              "\n¿Seguro que desea continuar?"):
+                                                      opcion_actual.capitalize().replace("_",
+                                                                                         " ") + " a sus valores por defecto."
+                                                                                                "\n¿Seguro que desea continuar?"):
 
                 if opcion_actual == "dificultad_y_valor_de_fichas":
                     user_config.tiempo = default_config.tiempo
@@ -301,9 +307,10 @@ def abrir_configuracion():
                 if opcion_actual == "cantidad_de_fichas":
                     user_config.cantidad_fichas = default_config.cantidad_fichas
 
-                sg.PopupOK('Valores por defecto reestablecidos.')
+                sg.PopupOK("Valores por defecto reestablecidos.")
 
-        elif event == 'boton_confirmar':
+        # Opcion confirmar
+        elif event == "boton_confirmar":
             guardado = False
 
             if opcion_actual == "cantidad_de_fichas":
@@ -317,16 +324,17 @@ def abrir_configuracion():
                     user_config.dificultad = "medio"
                 else:
                     user_config.dificultad = "dificil"
-                user_config.tiempo = values ["cant_minutos"]
+                user_config.tiempo = values["cant_minutos"]
 
-        elif event == 'Guardar':
+        # Opcion guardar
+        elif event == "Guardar":
             guardado = Configuracion.guardar_configuracion(user_config)
 
             if guardado:
-                sg.PopupOK('Los cambios se han guardado con éxito.')
+                sg.PopupOK("Los cambios se han guardado con éxito.")
             else:
-                sg.PopupOK('Un error ocurrió mientras intentábamos guardar la configuración. No se guardaron los cambios')
-
+                sg.PopupOK("Un error ocurrió mientras intentábamos guardar la configuración. No se guardaron los"
+                           " cambios")
 
 
 if __name__ == "__main__":
