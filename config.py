@@ -221,6 +221,15 @@ def abrir_configuracion():
 
         return layout
 
+    def guardar_configuracion(user_config):
+        guardado = Configuracion.guardar_configuracion(user_config)
+
+        if guardado:
+            sg.PopupOK("Los cambios se han guardado con éxito.")
+        else:
+            sg.PopupOK("Un error ocurrió mientras intentábamos guardar la configuración."
+                       " No se guardaron los cambios")
+
     lista_de_opciones = [
         "dificultad_y_valor_de_fichas",
         "cantidad_de_fichas",
@@ -261,7 +270,6 @@ def abrir_configuracion():
                                                     "Continuar restablecerá todas las opciones de "
                                                     + opcion_actual.capitalize().replace("_", " ")
                                                     + " a sus valores por defecto. ¿Seguro que desea continuar?"):
-                print("testing")
                 if opcion_actual == "dificultad_y_valor_de_fichas":
                     user_config.tiempo = default_config.tiempo
                     user_config.dificultad = default_config.dificultad
@@ -271,6 +279,7 @@ def abrir_configuracion():
                     user_config.cantidad_fichas = default_config.cantidad_fichas
 
                 sg.PopupOK("Valores por defecto reestablecidos.")
+                guardar_configuracion(user_config)
                 window.Close()
                 gui_configuracion.abrir_configuracion()
 
@@ -289,16 +298,12 @@ def abrir_configuracion():
                     user_config.dificultad = "dificil"
                 user_config.tiempo = values ["cant_minutos"]
 
-            guardado = Configuracion.guardar_configuracion(user_config)
-
-            if guardado:
-                sg.PopupOK("Los cambios se han guardado con éxito.")
-            else:
-                sg.PopupOK("Un error ocurrió mientras intentábamos guardar la configuración."
-                           " No se guardaron los cambios")
+            guardar_configuracion(user_config)
 
             window.Close()
             gui_configuracion.abrir_configuracion()
+            break
+
 
 if __name__ == "__main__":
     abrir_configuracion()
