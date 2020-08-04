@@ -21,6 +21,7 @@ def ventana_juego():
     dic = dict()  # diccionario de botones(objetos)
 
     valores = user_config.convertir_a_valores()  # busca los valores de la letras en la configuracion
+    print(valores)
     bolsa = user_config.convertir_en_bolsa()  # busca todas las letras q se van a jugar en la configuracion
     tiempo_total = user_config.tiempo * 6000
     dificultad = user_config.dificultad
@@ -206,6 +207,7 @@ def ventana_juego():
             ext = [[sg.Listbox(values=jugadas, key="jugada2", size=(50, 10))],[sg.Text("el puntaje es "+str(puntaje), key="puntajeIA", size=(20, 1))]]
         list =[crear_atril("bot")]
         list.extend(ext)
+        list.append(ayuda_memoria())
         return list
 
     def verificarConfirmar(list, l):
@@ -311,6 +313,16 @@ def ventana_juego():
 
             except Exception as e:
                 print(e)
+
+    def ayuda_memoria():
+        return [sg.Frame("Ayuda Memoria",[[sg.Button("",size=(2,1),button_color=("black", "red"),disabled=True),
+                                            sg.Text("-1 letra")],
+                                           [sg.Button("",size=(2,1),button_color=("black", "blue"),disabled=True),
+                                            sg.Text("-3 letra")],
+                                           [sg.Button("",size=(2,1),button_color=("black", "green"),disabled=True),
+                                            sg.Text("*2 letra")],
+                                           [sg.Button("",size=(2,1),button_color=("black", "brown"),disabled=True),
+                                            sg.Text("*3 letra")]])]
 
     def fin_juego(puntaje_total,puntaje_maquina, atril_jugador, atril_maquina, valores):
         atril_player=[]
