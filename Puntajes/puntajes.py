@@ -16,7 +16,7 @@ class Puntajes:
 
     def solo_top_diez(self,lista):
         try:
-            return sorted(lista, reverse=True)[:10]
+            return sorted(lista, key=lambda x: x[1], reverse=True)[:10]
         except TypeError:
             return sorted(lista, reverse=True)
 
@@ -62,7 +62,7 @@ def obtener_puntajes():
     return puntajes
 
 
-def guardar_configuracion(puntajes):
+def guardar_puntajes(puntajes):
     """busca el archivo de puntajes y los sobreescribe si lo econcuetra sino crea otro
     devuelve true o false para avisar al user si hubo un error"""
     try:

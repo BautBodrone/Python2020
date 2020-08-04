@@ -5,6 +5,9 @@ def puntajes_GUI():
     puntaje = Puntajes.obtener_puntajes()
     facil, medio, dificil = puntaje.por_nivel()
     total = puntaje.por_puntaje()
+    print(puntaje.total)
+
+    Puntajes.guardar_puntajes(puntaje)
 
     columna_total = sg.Column([[sg.Table(total, headings=["nivel", "puntaje", "fecha"], hide_vertical_scroll=True)]],
                               key="col_tot")
