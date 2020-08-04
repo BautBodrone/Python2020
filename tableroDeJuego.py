@@ -26,7 +26,7 @@ def ventana_juego():
     dificultad = user_config.dificultad
     atril_jugador = ("letra1", "letra2", "letra3", "letra4", "letra5", "letra6", "letra7")
 
-    exception_bloqueo = ["comenzar", "salir", "pausar", "posponer","terminar"]
+    exception_bloqueo = ["Comenzar", "Salir", "Pausar", "Posponer", "Terminar"]
     letras_del_jugador = []
     clavesMaquina = dict()
     clavesJugador = dict()
