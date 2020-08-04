@@ -26,7 +26,7 @@ def ventana_juego():
     dificultad = user_config.dificultad
     atril_jugador = ("letra1", "letra2", "letra3", "letra4", "letra5", "letra6", "letra7")
 
-    exception_bloqueo = ["comenzar", "salir", "pausar", "posponer"]
+    exception_bloqueo = ["comenzar", "salir", "pausar", "posponer","terminar"]
     letras_del_jugador = []
     clavesMaquina = dict()
     clavesJugador = dict()
@@ -120,9 +120,10 @@ def ventana_juego():
                     dic[clave] = bot
                 matriz.append(linea)
             linea = [
-                sg.Submit("comenzar", key="comenzar", size=(9, 2)),
-                sg.Submit("salir", key="salir", size=(9, 2)),
-                sg.Submit("posponer", key="posponer", size=(9, 2), disabled=True)
+                sg.Submit("Comenzar", key="comenzar", size=(9, 2)),
+                sg.Submit("Posponer", key="posponer", size=(9, 2), disabled=True),
+                sg.Submit("Terminar", key="terminar", size=(9, 2), disabled=True),
+                sg.Submit("Salir", key="salir", size=(9, 2))
             ]
             matriz.append(linea)
         else:
@@ -159,6 +160,7 @@ def ventana_juego():
             linea = [
                 sg.Submit("Comenzar", key="comenzar", size=(9, 2)),
                 sg.Submit("Posponer", key="posponer", size=(9, 2), disabled=True),
+                sg.Submit("Terminar", key="terminar", size=(9, 2), disabled=True),
                 sg.Submit("Salir", key="salir", size=(9, 2))
             ]
             matriz.append(linea)
@@ -335,13 +337,14 @@ def ventana_juego():
         else:
             puntaje.dificil.append([dificultad, puntaje_total, fecha_y_hora.now().strftime("%Y-%m-%d %H:%M:%S")])
         puntaje.total.append([dificultad, puntaje_total, fecha_y_hora.now().strftime("%Y-%m-%d %H:%M:%S")])
-        Puntajes.guardar_configuracion(puntaje)
+        Puntajes.guardar_puntajes(puntaje)
         window.Close()
         return
 
     evento = preguntar()
     if evento == "continuar":
         try:
+            """si se selecciona continuar se crea un layout a partir de los datos guardados"""
             archivo = open("guardar\jugadaGuardada", "r")
             datos = json.load(archivo)
             jugada = datos["guardar0"]
@@ -364,6 +367,7 @@ def ventana_juego():
         except FileNotFoundError:
             sg.popup("no hay partida guardada")
     elif evento == "no continuar":
+        """si se selecciona continuar se crea un layout desde cero"""
         if len(bolsa) < 20:
             sg.PopupError("Minimo de letras permitodo es 20. Agregue mas y vuelva a intentar")
             exit()
@@ -405,19 +409,20 @@ def ventana_juego():
     deshabiliatar = True  # utilizado para habilitar atril
     iniciado = False  # utilizado una sola vez para buscar las 7 letras del atril
 
-
     while True:
+        """main loop del programa el cual tiene en cuenta las opviones a seleccionar"""
         try:
             if not paused:
+                """si no esta pausado el tiempo del timer corre normalmente"""
                 if current_time < tiempo_total:
                     current_time = int(round(time.time() * 100)) - start_time
                 else:  # se termina el juego y se define al ganador
                     raise TimeoutError
 
             if not comenzar:
-                event, values = window.Read()
+                event, values = window.Read()  # espera leer un click en pantalla
             else:
-                event, values = window.Read(timeout=10)
+                event, values = window.Read(timeout=10)  # utilizado para el que avance el timer y para leer click de botones
 
             if event in (None, "salir"):  # si no recibe un evento se termina el programa
                 window.Close()
@@ -426,11 +431,11 @@ def ventana_juego():
             elif event is "comenzar":
                 comenzar = not comenzar
                 if comenzar:
-                    window.Element("comenzar").Update(text="pausar")
+                    window.Element("comenzar").Update(text="Pausar")
                     start_time = start_time + time_as_int() - paused_time
                 else:
                     paused_time = time_as_int()
-                    window.Element("comenzar").Update(text="comenzar")
+                    window.Element("comenzar").Update(text="Comenzar")
                 deshabiliatar = not deshabiliatar
                 if evento != "continuar":
                     for x in range(1, 8):
@@ -440,8 +445,6 @@ def ventana_juego():
                 else:
                     paused = not paused
                     x = 1
-                    print(x)
-                    print(letras_del_jugador)
 
                     for i in letras_del_jugador:
                         window.Element("letra" + str(x)).Update(disabled=deshabiliatar)
@@ -454,6 +457,7 @@ def ventana_juego():
                 window.Element("cambiar").Update(disabled=deshabiliatar)
                 window.Element("cancelar").Update(disabled=deshabiliatar)
                 window.Element("posponer").Update(disabled=deshabiliatar)
+                window.Element("terminar").Update(disabled=deshabiliatar)
 
             elif event == "posponer":
                 paused = not paused
@@ -473,6 +477,11 @@ def ventana_juego():
                         guardar18=paused_time, guardar19=paused, guardar20=start_time, guardar21=comenzar,
                         guardar22=iniciado, guardar23=deshabiliatar, guardar24=cambio, guardar25=cambios_restantes)
                 break
+
+            elif event == "terminar":
+                """termina el juego levantando un excepcion para que lo agarre le except"""
+                raise TimeoutError
+
             elif event == "confirmar":  # ingresa la palabra en el tablero
                 total = 0
                 letra = ""
@@ -489,7 +498,7 @@ def ventana_juego():
                     print(total)
                     puntajeTotal += total  # el puntaje real del jugador real
                     text = str(puntajeTotal)
-                    window.FindElement('puntaje').Update("el puntaje es {}".format(text))  # muestra el puntaje
+                    window.FindElement("puntaje").Update("el puntaje es {}".format(text))  # muestra el puntaje
                     if len(presionadas) > 0:
                         for i in letras:
                             window.Element(i).Update(text=buscar_ficha())
@@ -559,14 +568,12 @@ def ventana_juego():
             if not turno_elegido:
                 print("turno de la maquina")
                 print(atrilMaquina)
-                # desbloquear_boton()
                 puntajeMaquina += float(
                     turno_pc(atrilMaquina, botones_usados, window, dificultad, valores, dic, jugadasMaquina,
                              clavesMaquina))
                 window.Element("puntajeIA").Update("el puntaje total es: {}".format(str(puntajeMaquina)))
                 print(atrilMaquina)
                 reponerFichas(atrilMaquina)
-                # bloquear_boton()
 
                 turno_elegido = not turno_elegido
                 print(botones_usados)
