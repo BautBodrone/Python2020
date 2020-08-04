@@ -12,11 +12,13 @@ def convertirTupla(tupla):  # sacado de geekforgeeks
     return str
 
 def buscar_palabra(atril, dificultad):
-
-    for i in range(dic[dificultad],len(atril)):
-        for each in it.permutations(atril,i):
+    largo_palabras = [*range(2, 8)]
+    for i in range(2, 8):
+        largo = random.choice(largo_palabras)
+        for each in it.permutations(atril,largo):
             palabra=convertirTupla(each)
             if(correccion.palabraValida(palabra,dificultad)):
                 return palabra
+        largo_palabras.remove(largo)
     return ""
 

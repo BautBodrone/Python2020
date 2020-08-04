@@ -31,4 +31,4 @@ def palabraValida(palabra,dificultad):
         if (dificultad == 'facil'):
             return True
         else:
-            return verbosOAdjetivos(palabra,dificultadMedia)
+            return verbosOAdjetivos(palabra, dificultadMedia)
