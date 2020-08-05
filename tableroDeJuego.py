@@ -198,7 +198,7 @@ def ventana_juego():
                      ]
                      ])
 
-    def generarAtrilIA(jugadas="",puntaje=""):  # se puede atomatizar
+    def generarAtrilIA(jugadas="",puntaje="", dificultad=""):  # se puede atomatizar
         """se muesta el puntaje y el atril del jugador IA"""
         if(puntaje == ""):
             ext=[[sg.Listbox(values=[], key="jugada2", size=(50, 10))],[sg.Text("el puntaje es 0", key="puntajeIA", size=(20, 1))]]
@@ -207,7 +207,7 @@ def ventana_juego():
             ext = [[sg.Listbox(values=jugadas, key="jugada2", size=(50, 10))],[sg.Text("el puntaje es "+str(puntaje), key="puntajeIA", size=(20, 1))]]
         list =[crear_atril("bot")]
         list.extend(ext)
-        list.append(ayuda_memoria())
+        list.append(ayuda_memoria(dificultad))
         return list
 
     def verificarConfirmar(list, l):
@@ -314,8 +314,18 @@ def ventana_juego():
             except Exception as e:
                 print(e)
 
-    def ayuda_memoria():
-        return [sg.Frame("Ayuda Memoria",[[sg.Button("",size=(2,1),button_color=("black", "red"),disabled=True),
+    def ayuda_memoria(dificultad):
+        texto_deficultad = str(dificultad) + ": "
+        if dificultad == "facil":
+            texto_deficultad += "todo tipo"
+        elif dificultad == "medio":
+            texto_deficultad += "adjetivos y verbos"
+        else:
+            texto_deficultad += "falta"###########################################################################################################
+
+        return [sg.Frame("Ayuda Memoria",[[sg.Text(texto_deficultad)],
+                                          [sg.Text("                              ",key="turno_actual_display")],
+                                          [sg.Button("",size=(2,1),button_color=("black", "red"),disabled=True),
                                             sg.Text("-1 letra")],
                                            [sg.Button("",size=(2,1),button_color=("black", "blue"),disabled=True),
                                             sg.Text("-3 letra")],
@@ -328,17 +338,22 @@ def ventana_juego():
         atril_player=[]
         for x in atril_jugador:
             atril_player.append(str(window.Element(x).GetText()))
-        puntaje_total -= toma_valores_atril(atril_player, valores)
+        resta_puntaje_jugadoer = toma_valores_atril(atril_player, valores)
+        puntaje_final = puntaje_total - resta_puntaje_jugadoer
         puntaje_maquina -= toma_valores_atril(atril_maquina, valores)
 
-        if puntaje_total > puntaje_maquina:
-            sg.Popup("GANASTE!!! con: " + str(puntaje_total) + " puntos contra: " + str(puntaje_maquina) + " de la maquina")
+        if puntaje_final > puntaje_maquina:
+            sg.Popup("GANASTE!!! con: " + str(puntaje_final) + " puntos contra: " + str(puntaje_maquina) +
+                     " de la maquina", "Puntos por palabra: " + str(puntaje_total) + " - Puntos letras no usadas: " +
+                     str(resta_puntaje_jugadoer))
 
-        elif puntaje_maquina == puntaje_total:
-            sg.Popup("Hubo empate")
+        elif puntaje_maquina == puntaje_final:
+            sg.Popup("Hubo empate de: " + str(puntaje_final))
 
         else:
-            sg.Popup("Gano la maquina con: " + str(puntaje_maquina) + " puntos contra: " + str(puntaje_total) + " tuyos")
+            sg.Popup("Gano la maquina con: " + str(puntaje_maquina) + " puntos contra: " + str(puntaje_final) + " tuyos"
+                     , "Puntos por palabra: " + str(puntaje_total) + " - Puntos letras no usadas: " +
+                     str(resta_puntaje_jugadoer))
 
         puntaje = Puntajes.obtener_puntajes()
 
@@ -372,7 +387,8 @@ def ventana_juego():
             turno_elegido, deficultad, event_anterior, puntajeMaquina, puntajeTotal, cambios_cantidad, current_time\
                 , tiempo_total, paused_time, paused, start_time, comenzar, iniciado, deshabiliatar\
                 , cambio, cambios_restantes = retomarPartida(datos)
-            inteligenciaArt = generarAtrilIA(jugadasMaquina, puntajeMaquina)
+            inteligenciaArt = generarAtrilIA(jugadasMaquina, puntajeMaquina,
+                                             dificultad=dificultad)
             matriz = generar_matriz(dificultad, clavesMaquina, clavesJugador)
             columna_izquierda = matriz
             columna_derecha = crear_derecha(jugada, puntajeTotal)
@@ -385,7 +401,7 @@ def ventana_juego():
             exit()
         else:
             turno_elegido = random.choice(turno)
-            inteligenciaArt = generarAtrilIA()
+            inteligenciaArt = generarAtrilIA(dificultad=dificultad)
             matriz = generar_matriz(dificultad)
             columna_izquierda = matriz
             columna_derecha = crear_derecha()
@@ -435,6 +451,8 @@ def ventana_juego():
                 event, values = window.Read()  # espera leer un click en pantalla
             else:
                 event, values = window.Read(timeout=10)  # utilizado para el que avance el timer y para leer click de botones
+
+            window.Element("turno_actual_display").Update(value="Turno actual: Jugador")
 
             if event in (None, "salir"):  # si no recibe un evento se termina el programa
                 window.Close()
@@ -598,6 +616,9 @@ def ventana_juego():
         except (IndexError, TimeoutError):
              fin_juego(puntajeTotal, puntajeMaquina, atril_jugador, atrilMaquina, valores)
              exit()
+
+        except Exception as e:
+            print("!!!!!"+str(e)+"¡¡¡¡¡")
 
     window.Close()
 
