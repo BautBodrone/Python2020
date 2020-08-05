@@ -315,7 +315,7 @@ def ventana_juego():
                 print(e)
 
     def ayuda_memoria(dificultad):
-        texto_deficultad = str(dificultad) + ": "
+        texto_deficultad = str(dificultad.capitalize()) + ": "
         if dificultad == "facil":
             texto_deficultad += "todo tipo"
         elif dificultad == "medio":

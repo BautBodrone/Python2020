@@ -43,10 +43,8 @@ def abrirMain():
 
         elif event == "jugar":
             window.Disappear()
-            try:
-                juego.ventana_juego()
-            except:
-                print("sale")
+            #window.Close()
+            juego.ventana_juego()
             window.Reappear()
 
         else:
