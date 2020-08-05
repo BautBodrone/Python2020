@@ -534,6 +534,7 @@ def ventana_juego():
                 if cambios_restantes == 0:
                     sg.popup_error("No te quedan mas cambios")
                 else:
+                    presionadas = cancelar_seleccion(letras, presionadas)
                     atril_cambio_valor = []
                     for x in atril_jugador:
                         atril_cambio_valor.append(window.Element(x).GetText())

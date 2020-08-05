@@ -1,6 +1,6 @@
 {
     "tiempo": 7.0,
-    "dificultad": "facil",
+    "dificultad": "medio",
     "valor_fichas": {
         "A, E, O, S, I, U, N, L, R, T": 1.0,
         "C, D, G": 2.0,
