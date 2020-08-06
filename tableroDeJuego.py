@@ -328,10 +328,10 @@ def ventana_juego():
         elif dificultad == "medio":
             texto_deficultad += "adjetivos y verbos"
         else:
-            texto_deficultad += cate###########################################################################################################
+            texto_deficultad += cate
 
         return [sg.Frame("Ayuda Memoria",[[sg.Text(texto_deficultad)],
-                                          [sg.Text("                              ",key="turno_actual_display")],
+                                          [sg.Text(" "*31,key="turno_actual_display")],
                                           [sg.Button("",size=(2,1),button_color=("black", "red"),disabled=True),
                                             sg.Text("-1 letra")],
                                            [sg.Button("",size=(2,1),button_color=("black", "blue"),disabled=True),
@@ -617,9 +617,10 @@ def ventana_juego():
                 puntajeMaquina += float(
                     turno_pc(atrilMaquina, botones_usados, window, dificultad, valores, dic, jugadasMaquina,
                              clavesMaquina, cate))
-                window.Element("puntajeIA").Update("el puntaje total es: {}".format(str(puntajeMaquina)))
-                print(atrilMaquina)
-                reponerFichas(atrilMaquina)
+                if puntajeMaquina is not False:
+                    window.Element("puntajeIA").Update("el puntaje total es: {}".format(str(puntajeMaquina)))
+                    print(atrilMaquina)
+                    reponerFichas(atrilMaquina)
 
                 turno_elegido = not turno_elegido
                 print(botones_usados)
@@ -630,7 +631,7 @@ def ventana_juego():
 
         except (IndexError, TimeoutError):
              fin_juego(puntajeTotal, puntajeMaquina, atril_jugador, atrilMaquina, valores)
-             exit()
+             break
 
         except Exception as e:
             print("!!!!!"+str(e)+"¡¡¡¡¡")

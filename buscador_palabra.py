@@ -20,5 +20,5 @@ def buscar_palabra(atril, dificultad,categoria):
             if(correccion.palabraValida(palabra,dificultad,categoria)):
                 return palabra
         largo_palabras.remove(largo)
-    return ""
+    return False
 
