@@ -612,6 +612,7 @@ def ventana_juego():
             if event != "__TIMEOUT__":
                 event_anterior = event
             if not turno_elegido:
+                window.Element("turno_actual_display").Update(value="Turno actual: Maquina")
                 print("turno de la maquina")
                 print(atrilMaquina)
                 puntajeMaquina += float(

@@ -6,7 +6,7 @@ class Boton:
         self._color=None
 
     def asignarColor(self, i, j, dificultad):
-        """asigna un color a cada boton"""
+        """asigna un color y un valor con multiplicacion y descuento a cada boton"""
         dic=color.nivel(dificultad)
         if (i, j) in dic['azul']:
             self._color = ("black", "blue")
@@ -29,9 +29,10 @@ class Boton:
 
 
     def devolverValor(self, v):
-        """devuelve el valor del boton"""
+        """resive un valor y devuelve el valor del boton dependiendo del valor que reciba como parametro"""
         return self._valor(v)
     def colorNuevo(self,color):
+        """este color se asigna a las claves que ya fueron usados por el jugador o la maquina"""
         self._color=color
 
     @property

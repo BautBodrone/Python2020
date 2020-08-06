@@ -11,16 +11,16 @@ def verbosOAdjetivos(palabra,soloVerbosOadjetivos,dificultad,categoria):
     #print(VD)
     #print(dato)
     if dificultad == "medio":
-        if VD in soloVerbosOadjetivos[dificultad]:
+        if VD in soloVerbosOadjetivos[dificultad]: #si la palabra esta dentro de los adjetivos y verbos
             print("medio")
             print(VD)
             print(palabra)
             return True
-    elif VD in soloVerbosOadjetivos[categoria]:
-        print(categoria)
+    elif VD in soloVerbosOadjetivos[categoria]:#si la palabra esta dentro de los adjetivos o verbos dependiendoq ue se
+        print(categoria)                        # eligio
         print(palabra)
         return True
-    else:
+    else:# como no entro a nungun if no es ni verbo o adjetivo
         return False
 
 def palabraValida(palabra,dificultad,categoria):
