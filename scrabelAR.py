@@ -1,5 +1,9 @@
+# AUTORES:
+# Bautista Jose Bodrone
+# Javier Franco Jose Camacho Encinas
+#
+# GPL-3.0-or-later
 import PySimpleGUI as sg
-
 import config as gui_configuracion
 import puntajes_GUI as puntajes
 import tableroDeJuego as juego

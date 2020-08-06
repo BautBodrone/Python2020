@@ -1,7 +1,10 @@
+# AUTORES:
+# Bautista Jose Bodrone
+# Javier Franco Jose Camacho Encinas
+#
+# GPL-3.0-or-later
 import random
-
 from buscador_palabra import buscar_palabra
-
 
 
 def devolverString(x, y):
@@ -50,7 +53,7 @@ def se_sigue(fichas, letrast, dificultad, window, valores, valor_boton, jugada, 
     n = 0
     ok = False
     puntos = 0
-    palabra = buscar_palabra(fichas, dificultad,categoria)
+    palabra = buscar_palabra(fichas, dificultad, categoria)
     if palabra is not False:
         while not ok:  # se entra en un bucle hasta que se inserte la palabra o se terminen los intentos de n
             x = random.randrange(15)

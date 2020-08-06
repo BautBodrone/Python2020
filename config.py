@@ -1,3 +1,8 @@
+# AUTORES:
+# Bautista Jose Bodrone
+# Javier Franco Jose Camacho Encinas
+#
+# GPL-3.0-or-later
 import PySimpleGUI as sg
 from Configuracion import config_dictionary as Configuracion
 import config as gui_configuracion

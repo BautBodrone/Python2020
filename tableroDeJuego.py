@@ -1,3 +1,8 @@
+# AUTORES:
+# Bautista Jose Bodrone
+# Javier Franco Jose Camacho Encinas
+#
+# GPL-3.0-or-later
 def ventana_juego():
     import PySimpleGUI as sg
     import random
@@ -82,6 +87,7 @@ def ventana_juego():
                 window.Element(pos).Update(disabled=False)
 
     def cambiar_fichas(lista_fichas, bolsa):
+        """recive una lista con letras, las cambia y las letras ca,biadas las devuelve a la bolsa"""
         if len(bolsa) >= len(lista_fichas):
             for ficha in lista_fichas:
                 cambio = window.Element(ficha).GetText()
@@ -91,13 +97,13 @@ def ventana_juego():
             sg.popup_error("No se puede cambiar por falta de fichas en la bolsa")
 
     def buscar_ficha():
-        """se saca aleatoriamente una ficha, se la elimina de la bolsa y retorna esa ficha"""
+        """busca una ficha de la bolsa sacandola de circulacion"""
         text = random.choice(bolsa)
         bolsa.remove(text)
         return text
 
     def cancelar_seleccion(letras, seleccion=[]):
-        """devuelve las fichas que fueron puestas en el tablero de scrabbelAR a el atril del jugador"""
+        """cancela la seleccion (cuando se toca una letra del atril o del tablero)"""
         if len(seleccion) > 0:
             for clave in seleccion:
                 window.Element(clave).Update(text="", disabled=True, button_color=dic[clave].color)
@@ -176,6 +182,7 @@ def ventana_juego():
         return matriz
 
     def crear_atril(nombre):
+        """crea 7 botones vacios y los mete en una lista  para que se usen como atril del jugador"""
         atril_l = []
         for x in range(1, 8):
             boton = (sg.Button("", key=nombre + str(x), size=(4, 2), button_color=("black", "white"), disabled=True))
@@ -229,6 +236,7 @@ def ventana_juego():
             return False
 
     def time_as_int():
+        """utilzado para el timer"""
         return int(round(time.time() * 100))
 
     def fichaAtrilAI():
@@ -239,6 +247,7 @@ def ventana_juego():
         return l
 
     def reponerFichas(atrilMaquina):
+        """repone las fichas faltantes del robot"""
         while len(atrilMaquina) != 7:
             atrilMaquina.append(buscar_ficha())
 
@@ -253,6 +262,7 @@ def ventana_juego():
         return event1
 
     def toma_valores_atril(atril, valores):
+        """recibe una lista de letras y calcular su valor usando el diccionario de valores"""
         suma = 0
         for x in atril:
             suma += valores[x]  # enviar valores como parametro
@@ -348,6 +358,8 @@ def ventana_juego():
                                             sg.Text("*3 letra")]])]
 
     def fin_juego(puntaje_total,puntaje_maquina, atril_jugador, atril_maquina, valores):
+        """hace la resta del total de puntajes menos las letras del atril, calcula quien gano y muestra su puntajes
+        luego lo guarda en puntajes.json"""
         atril_player=[]
         for x in atril_jugador:
             atril_player.append(str(window.Element(x).GetText()))
@@ -479,6 +491,8 @@ def ventana_juego():
                 break
 
             elif event is "comenzar":
+                """si en estado comenzar incia el timer y cambia texto de boton a pausar
+                 si en estado pausar lo pausa y cambia texto de boto a comenzar"""
                 comenzar = not comenzar
                 if comenzar:
                     window.Element("comenzar").Update(text="Pausar")
@@ -509,7 +523,8 @@ def ventana_juego():
                 window.Element("posponer").Update(disabled=deshabiliatar)
                 window.Element("terminar").Update(disabled=deshabiliatar)
 
-            elif event == "posponer":#guarda la partida
+            elif event == "posponer":
+                """pausa el juego y guarda todo sus datos para ser usados luego"""
                 paused = not paused
                 iniciado
                 paused_time = time_as_int()
@@ -534,6 +549,7 @@ def ventana_juego():
                 raise TimeoutError
 
             elif event == "confirmar":  # ingresa la palabra en el tablero
+                """se revisa la palabra y si cumple con los criterios del nivel la escribe en el tablero"""
                 total = 0
                 letra = ""
                 for i in presionadas:
@@ -570,6 +586,7 @@ def ventana_juego():
                     letras = []
 
             elif event == "cambiar":  # cambia las letras
+                """llama popup de cambiar para cambiar letras"""
                 if cambios_restantes == 0:
                     sg.popup_error("No te quedan mas cambios")
                 else:
@@ -582,11 +599,13 @@ def ventana_juego():
                         turno_elegido = not turno_elegido
 
             elif event == "cancelar":  # debuelve las palabras que puse en el tablero
+                """cancela las letras presionadas"""
                 presionadas = cancelar_seleccion(letras, presionadas)
 
             elif event in atril_jugador and not cambio:  # entra si se preciona una letra del atril
                 print("Tipo: ", event)
                 if event_anterior in atril_jugador:  # se fija si la letra anterior fue una del tablero para desbloquaer
+                    """se fija si se toca una letra antes para destrabarla"""
                     window.Element(event_anterior).Update(disabled=False)
                 elif len(presionadas) == 0:
                     if window.Element("7,7").GetText() != "":

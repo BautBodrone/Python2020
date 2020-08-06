@@ -1,3 +1,8 @@
+# AUTORES:
+# Bautista Jose Bodrone
+# Javier Franco Jose Camacho Encinas
+#
+# GPL-3.0-or-later
 from pattern.es import verbs, spelling, lexicon, parse, split
 
 def verbosOAdjetivos(palabra,soloVerbosOadjetivos,dificultad,categoria):

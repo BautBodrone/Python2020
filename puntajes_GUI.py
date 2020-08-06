@@ -1,3 +1,8 @@
+# AUTORES:
+# Bautista Jose Bodrone
+# Javier Franco Jose Camacho Encinas
+#
+# GPL-3.0-or-later
 def puntajes_GUI():
     import PySimpleGUI as sg
     from Puntajes import puntajes as Puntajes

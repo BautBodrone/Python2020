@@ -1,9 +1,13 @@
+# AUTORES:
+# Bautista Jose Bodrone
+# Javier Franco Jose Camacho Encinas
+#
+# GPL-3.0-or-later
 import itertools as it
 import random
 import correccion_de_palabras as correccion
 
 def convertirTupla(tupla):  # sacado de geekforgeeks
-
     str = ''.join(tupla)
     return str
 

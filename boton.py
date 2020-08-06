@@ -1,3 +1,8 @@
+# AUTORES:
+# Bautista Jose Bodrone
+# Javier Franco Jose Camacho Encinas
+#
+# GPL-3.0-or-later
 import color_para_boton as color
 class Boton:
 

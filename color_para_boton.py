@@ -1,3 +1,8 @@
+# AUTORES:
+# Bautista Jose Bodrone
+# Javier Franco Jose Camacho Encinas
+#
+# GPL-3.0-or-later
 def nivel(dificultad):
     """es una funcion que se usa para armar el tablero dependiendo la dificultad el diccionario contiene el color
     para cada celda del tablero"""
