@@ -2,18 +2,18 @@ import random
 
 from buscador_palabra import buscar_palabra
 
-dic = dict()
-dic['facil'] = 2
-dic['medio'] = 3
-dic['dificil'] = 4
+#dic = dict()
+#dic['facil'] = 2
+#dic['medio'] = 3
+#dic['dificil'] = 4
 
 
 def devolverString(x, y):
     return (str(x) + "," + str(y))
 
 
-def primera_jugada(fichas, window, dificultad, letrasT, valores, valor_boton, jugada, claves):
-    palabra = buscar_palabra(fichas, dificultad)
+def primera_jugada(fichas, window, dificultad, letrasT, valores, valor_boton, jugada, claves,categoria):
+    palabra = buscar_palabra(fichas, dificultad,categoria)
     puntos = 0
     x, y = 7, 7
     lugar = random.choice([True, False])  # true=derecha y false=abajo
@@ -44,11 +44,11 @@ def primera_jugada(fichas, window, dificultad, letrasT, valores, valor_boton, ju
     return puntos
 
 
-def se_sigue(fichas, letrast, dificultad, window, valores, valor_boton, jugada, claves):
+def se_sigue(fichas, letrast, dificultad, window, valores, valor_boton, jugada, claves,categoria):
     n = 0
     ok = False
     puntos = 0
-    palabra = buscar_palabra(fichas, dificultad)
+    palabra = buscar_palabra(fichas, dificultad,categoria)
     while not ok:
         x = random.randrange(15)
         y = random.randrange(15)
@@ -77,7 +77,8 @@ def se_sigue(fichas, letrast, dificultad, window, valores, valor_boton, jugada, 
                         abajo = not abajo
                         lugar = not lugar
                     print("el tamanio es: " + str(len(letras_dic)))
-                    if len(letras_dic) >= dic[dificultad]:  # si el tamaño es acorde a la dificultad pone la letra
+                    if len(letras_dic) == len(palabra) and len(palabra)>= 2:  # si el tamaño es acorde a la dificultad pone la letra
+                        print(palabra)
                         for i in letras_dic.keys():
                             letrast.append(i)
                             claves[i] = letras_dic[i]
@@ -106,7 +107,8 @@ def se_sigue(fichas, letrast, dificultad, window, valores, valor_boton, jugada, 
                         derecha = not derecha
                         lugar = not lugar
                     print("el tamanio es: " + str(len(letras_dic)))
-                    if len(letras_dic) >= dic[dificultad]:
+                    if len(letras_dic) == len(palabra) and len(palabra)>= 2 :
+                        print(palabra)
                         for i in letras_dic.keys():
                             letrast.append(i)
                             puntos += valor_boton[i].devolverValor(valores[letras_dic[i]])
@@ -128,10 +130,10 @@ def se_sigue(fichas, letrast, dificultad, window, valores, valor_boton, jugada, 
     return puntos
 
 
-def turno_pc(fichas, letrasT, window, dificultad, valores, valor_boton, jugada, claves):
+def turno_pc(fichas, letrasT, window, dificultad, valores, valor_boton, jugada, claves,categoria):
     if len(letrasT) == 0:  # en el caso de no sea 0 es porque no hay ninguna palabra puesta y la palabra se pone el 77
-        puntaje = primera_jugada(fichas, window, dificultad, letrasT, valores, valor_boton, jugada, claves)
+        puntaje = primera_jugada(fichas, window, dificultad, letrasT, valores, valor_boton, jugada, claves,categoria)
         return puntaje
     else:
-        puntaje = se_sigue(fichas, letrasT, dificultad, window, valores, valor_boton, jugada, claves)
+        puntaje = se_sigue(fichas, letrasT, dificultad, window, valores, valor_boton, jugada, claves,categoria)
         return puntaje
