@@ -10,7 +10,7 @@ def ventana_juego():
     from datetime import datetime as fecha_y_hora
     import json
 
-    jugada=[]
+    jugada=[]#debe contener cada jugada que hace el jugador, que palabra pone y el puntaje obtenido
 
     user_config = configuracion.obtener_config()
     presionadas = []  # los cuadrantes que se seleccionaron del tablero
@@ -22,17 +22,22 @@ def ventana_juego():
     dic = dict()  # diccionario de botones(objetos)
 
     valores = user_config.convertir_a_valores()  # busca los valores de la letras en la configuracion
-    print(valores)
     bolsa = user_config.convertir_en_bolsa()  # busca todas las letras q se van a jugar en la configuracion
     tiempo_total = user_config.tiempo * 6000
     dificultad = user_config.dificultad
     atril_jugador = ("letra1", "letra2", "letra3", "letra4", "letra5", "letra6", "letra7")
 
     exception_bloqueo = ["Comenzar", "Salir", "Pausar", "Posponer", "Terminar"]
-    letras_del_jugador = []
-    clavesMaquina = dict()
-    clavesJugador = dict()
-    jugadasMaquina=[]
+    letras_del_jugador = [] #esta lista se usa cuando se quiere guardar las fichas que tiene antes de guardar el jugador
+
+    clavesMaquina = dict()#se usa para almacenar las palabras formadas por la maquina asi para cuando se guarden se
+                    #puede usar su informacion para retomar la patida cada item contiene la clave y su letra asociada
+
+    clavesJugador = dict()#se usa para almacenar las palabras formadas por el jugador asi para cuando se guarden se
+                    #puede usar su informacion para retomar la patida cada item contiene la clave y su letra asociada
+
+    jugadasMaquina=[]#debe contener cada jugada que hace la maquina, que palabra pone y el puntaje obtenido
+
     tamanio_matriz=15
 
     def desbloquear_boton():
@@ -86,11 +91,13 @@ def ventana_juego():
             sg.popup_error("No se puede cambiar por falta de fichas en la bolsa")
 
     def buscar_ficha():
+        """se saca aleatoriamente una ficha, se la elimina de la bolsa y retorna esa ficha"""
         text = random.choice(bolsa)
         bolsa.remove(text)
         return text
 
     def cancelar_seleccion(letras, seleccion=[]):
+        """devuelve las fichas que fueron puestas en el tablero de scrabbelAR a el atril del jugador"""
         if len(seleccion) > 0:
             for clave in seleccion:
                 window.Element(clave).Update(text="", disabled=True, button_color=dic[clave].color)
@@ -100,7 +107,7 @@ def ventana_juego():
 
     def generar_matriz(dificultad,clavesMaquina="", clavesJugador="", tamanio=tamanio_matriz):
         """Genera una matriz de N filas y N columnas y muestra los botones de comenzar, terminar,pausar y salir"""
-        if(clavesMaquina == ""):
+        if(clavesMaquina == ""):# este if crea el tablero segun su dificultad
             matriz = []
             for y in range(tamanio):
                 linea = []
@@ -128,7 +135,7 @@ def ventana_juego():
                 sg.Submit("Salir", key="salir", size=(9, 2))
             ]
             matriz.append(linea)
-        else:
+        else:#este else crea el tablero pero en caso de que se retome la partida
             matriz = []
             for y in range(tamanio):
                 linea = []
@@ -217,16 +224,15 @@ def ventana_juego():
     def verificarConfirmar(list, l,categoria):
         """se pregunta si todo esta bien para insertar la palabras"""
         if (len(list) > 1) and (palabraValida(l, dificultad,categoria)):
-            print('verificarConfirmar devuelve True')
             return True
         else:
-            print('verificarConfirmar devuelve False')
             return False
 
     def time_as_int():
         return int(round(time.time() * 100))
 
     def fichaAtrilAI():
+        """se genera una lista con 7 letras para la maquina"""
         l = []
         for i in range(7):
             l.append(buscar_ficha())
@@ -260,8 +266,8 @@ def ventana_juego():
         archivo.close()
 
     def retomarPartida(datos):
-        """esta funcion es usada para devolver las variables que no son una estructura de datos o variables de tipo
-        string"""
+        """esta funcion es usada para devolver las variables que no son una estructura de datos a excepcion de los
+        que son de tipo string"""
         list=[]
         for each in range(10,27):
             list.append(datos["guardar"+str(each)])
@@ -376,7 +382,7 @@ def ventana_juego():
         return
 
     evento = preguntar()
-    if evento == "continuar":
+    if evento == "continuar":# este if es para retomar la partida guardada
         try:
             """si se selecciona continuar se crea un layout a partir de los datos guardados"""
             archivo = open("guardar\jugadaGuardada", "r")
@@ -400,7 +406,7 @@ def ventana_juego():
             columna_derecha = crear_derecha(jugada, puntajeTotal)
         except FileNotFoundError:
             sg.popup("no hay partida guardada")
-    elif evento == "no continuar":
+    elif evento == "no continuar":#inicia una partida nueva
         """si se selecciona continuar se crea un layout desde cero"""
         if len(bolsa) < 20:
             sg.PopupError("Minimo de letras permitodo es 20. Agregue mas y vuelva a intentar")
@@ -503,7 +509,7 @@ def ventana_juego():
                 window.Element("posponer").Update(disabled=deshabiliatar)
                 window.Element("terminar").Update(disabled=deshabiliatar)
 
-            elif event == "posponer":
+            elif event == "posponer":#guarda la partida
                 paused = not paused
                 iniciado
                 paused_time = time_as_int()
