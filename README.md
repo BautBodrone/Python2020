@@ -2,4 +2,10 @@
 Integrantes: -Javier Franco Jose Camacho Encinas
              -Bautisa Jose Bodrone
 
-El progrma se abre desde main.py
+Requisitos del sistema:
+    .python versión 3.6.8
+    .pattern versión 3.6
+    .pysimpleGUI versión 4.19.0
+    
+ejecucion del programa : para iniciar el juego se debe presionar en el archivo
+scrabelAR

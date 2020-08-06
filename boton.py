@@ -37,5 +37,5 @@ class Boton:
     @property
 
     def color(self):
-        """es un getter"""
+        """es un getter que devuelve el color del boton"""
         return self._color

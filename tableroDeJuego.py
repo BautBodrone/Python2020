@@ -98,7 +98,7 @@ def ventana_juego():
         return []
 
     def generar_matriz(dificultad,clavesMaquina="", clavesJugador="", tamanio=tamanio_matriz):
-        """Genera una matriz de N filas y N columnas"""
+        """Genera una matriz de N filas y N columnas y muestra los botones de comenzar, terminar,pausar y salir"""
         if(clavesMaquina == ""):
             matriz = []
             for y in range(tamanio):
@@ -175,6 +175,8 @@ def ventana_juego():
         return atril_l
 
     def crear_derecha(jugada="",puntaje=""):
+        """muestra el atril del jugador , los puntos , las jugadas con sus respectivos puntos y los botones de
+        confirmar, cancelar o cambiar ficha"""
         if jugada == "":
             return ([crear_atril("letra"),
                      [sg.Listbox(values=[], key='jugada1', size=(50, 10))],
@@ -198,8 +200,9 @@ def ventana_juego():
                      ]
                      ])
 
-    def generarAtrilIA(jugadas="",puntaje="", dificultad=""):  # se puede atomatizar
-        """se muesta el puntaje y el atril del jugador IA"""
+    def generarAtrilIA(categoria="",jugadas="",puntaje="", dificultad=""):  # se puede atomatizar
+        """se muesta el puntaje , el atril del jugador IA y del ayuda memoria que muestra el valor de los colores de la
+        tabla, el turno de jugador al que le toque poner la ficha y la dificultad"""
         if(puntaje == ""):
             ext=[[sg.Listbox(values=[], key="jugada2", size=(50, 10))],[sg.Text("el puntaje es 0", key="puntajeIA", size=(20, 1))]]
         else:
@@ -207,12 +210,12 @@ def ventana_juego():
             ext = [[sg.Listbox(values=jugadas, key="jugada2", size=(50, 10))],[sg.Text("el puntaje es "+str(puntaje), key="puntajeIA", size=(20, 1))]]
         list =[crear_atril("bot")]
         list.extend(ext)
-        list.append(ayuda_memoria(dificultad))
+        list.append(ayuda_memoria(categoria,dificultad))
         return list
 
-    def verificarConfirmar(list, l):
+    def verificarConfirmar(list, l,categoria):
         """se pregunta si todo esta bien para insertar la palabras"""
-        if (len(list) > 1) and (palabraValida(l, dificultad)):
+        if (len(list) > 1) and (palabraValida(l, dificultad,categoria)):
             print('verificarConfirmar devuelve True')
             return True
         else:
@@ -249,14 +252,17 @@ def ventana_juego():
         return suma
 
     def guardar(**kwargs):
+        """recibe un diccionario y lo almacena en formato json"""
         print(kwargs)
         archivo = open("guardar\jugadaGuardada", "w")
         json.dump(kwargs, archivo)
         archivo.close()
 
     def retomarPartida(datos):
+        """esta funcion es usada para devolver las variables que no son una estructura de datos o variables de tipo
+        string"""
         list=[]
-        for each in range(10,26):
+        for each in range(10,27):
             list.append(datos["guardar"+str(each)])
         return list
 
@@ -314,14 +320,14 @@ def ventana_juego():
             except Exception as e:
                 print(e)
 
-    def ayuda_memoria(dificultad):
+    def ayuda_memoria(cate,dificultad):
         texto_deficultad = str(dificultad.capitalize()) + ": "
         if dificultad == "facil":
             texto_deficultad += "todo tipo"
         elif dificultad == "medio":
             texto_deficultad += "adjetivos y verbos"
         else:
-            texto_deficultad += "falta"###########################################################################################################
+            texto_deficultad += cate###########################################################################################################
 
         return [sg.Frame("Ayuda Memoria",[[sg.Text(texto_deficultad)],
                                           [sg.Text("                              ",key="turno_actual_display")],
@@ -386,9 +392,8 @@ def ventana_juego():
             letras_del_jugador = datos["guardar9"]
             turno_elegido, deficultad, event_anterior, puntajeMaquina, puntajeTotal, cambios_cantidad, current_time\
                 , tiempo_total, paused_time, paused, start_time, comenzar, iniciado, deshabiliatar\
-                , cambio, cambios_restantes = retomarPartida(datos)
-            inteligenciaArt = generarAtrilIA(jugadasMaquina, puntajeMaquina,
-                                             dificultad=dificultad)
+                , cambio, cambios_restantes,cate = retomarPartida(datos)
+            inteligenciaArt = generarAtrilIA(cate,jugadasMaquina, puntajeMaquina,dificultad=dificultad)
             matriz = generar_matriz(dificultad, clavesMaquina, clavesJugador)
             columna_izquierda = matriz
             columna_derecha = crear_derecha(jugada, puntajeTotal)
@@ -401,7 +406,14 @@ def ventana_juego():
             exit()
         else:
             turno_elegido = random.choice(turno)
-            inteligenciaArt = generarAtrilIA(dificultad=dificultad)
+            cate = ""
+            if dificultad == "dificil" :
+                categoria =["adjetivos","verbos"]
+                cate = random.choice(categoria)
+                inteligenciaArt = generarAtrilIA(categoria=cate,dificultad=dificultad)
+            else:
+                inteligenciaArt = generarAtrilIA(dificultad=dificultad)
+
             matriz = generar_matriz(dificultad)
             columna_izquierda = matriz
             columna_derecha = crear_derecha()
@@ -450,7 +462,8 @@ def ventana_juego():
             if not comenzar:
                 event, values = window.Read()  # espera leer un click en pantalla
             else:
-                event, values = window.Read(timeout=10)  # utilizado para el que avance el timer y para leer click de botones
+                event, values = window.Read(
+                    timeout=10)  # utilizado para el que avance el timer y para leer click de botones
 
             window.Element("turno_actual_display").Update(value="Turno actual: Jugador")
 
@@ -505,7 +518,8 @@ def ventana_juego():
                         guardar12=event_anterior, guardar13=puntajeMaquina, guardar14=puntajeTotal,
                         guardar15=cambios_cantidad, guardar16=current_time, guardar17=tiempo_total,
                         guardar18=paused_time, guardar19=paused, guardar20=start_time, guardar21=comenzar,
-                        guardar22=iniciado, guardar23=deshabiliatar, guardar24=cambio, guardar25=cambios_restantes)
+                        guardar22=iniciado, guardar23=deshabiliatar, guardar24=cambio, guardar25=cambios_restantes,
+                        guardar26=cate)
                 break
 
             elif event == "terminar":
@@ -519,7 +533,7 @@ def ventana_juego():
                     letra += window.Element(i).GetText()
                 print(letra)
 
-                if verificarConfirmar(presionadas, letra):
+                if verificarConfirmar(presionadas, letra, cate):
                     for clave in presionadas:  # suma el puntaje
                         palabra = window.Element(clave).GetText()
                         total += dic[clave].devolverValor(valores[
@@ -601,7 +615,7 @@ def ventana_juego():
                 print(atrilMaquina)
                 puntajeMaquina += float(
                     turno_pc(atrilMaquina, botones_usados, window, dificultad, valores, dic, jugadasMaquina,
-                             clavesMaquina))
+                             clavesMaquina, cate))
                 window.Element("puntajeIA").Update("el puntaje total es: {}".format(str(puntajeMaquina)))
                 print(atrilMaquina)
                 reponerFichas(atrilMaquina)
@@ -610,8 +624,8 @@ def ventana_juego():
                 print(botones_usados)
 
             window.Element("-DISPLAY-").Update("{:02d}:{:02d}.{:02d}".format((current_time // 100) // 60,
-                                                                     (current_time // 100) % 60,
-                                                                     current_time % 100))
+                                                                             (current_time // 100) % 60,
+                                                                             current_time % 100))
 
         except (IndexError, TimeoutError):
              fin_juego(puntajeTotal, puntajeMaquina, atril_jugador, atrilMaquina, valores)

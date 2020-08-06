@@ -2,18 +2,17 @@ import random
 
 from buscador_palabra import buscar_palabra
 
-dic = dict()
-dic['facil'] = 2
-dic['medio'] = 3
-dic['dificil'] = 4
 
 
 def devolverString(x, y):
+    """devuelve un string con los parametro recividos """
     return (str(x) + "," + str(y))
 
 
-def primera_jugada(fichas, window, dificultad, letrasT, valores, valor_boton, jugada, claves):
-    palabra = buscar_palabra(fichas, dificultad)
+def primera_jugada(fichas, window, dificultad, letrasT, valores, valor_boton, jugada, claves,categoria):
+    """como es la primera jugada se inserta tranquilamente en la posicion inicial del juego se elige si se inserta
+     abajo o a la derecha dependiendo del valor que reciba la variable "lugar" del la operacion random.choice()"""
+    palabra = buscar_palabra(fichas, dificultad,categoria)
     puntos = 0
     x, y = 7, 7
     lugar = random.choice([True, False])  # true=derecha y false=abajo
@@ -25,7 +24,6 @@ def primera_jugada(fichas, window, dificultad, letrasT, valores, valor_boton, ju
             window.Element(clave).Update(disabled=True, button_color=("black", "purple"))
             fichas.remove(i)
             claves[clave] = i
-
             y += 1
             letrasT.append(clave)
     else:
@@ -44,11 +42,13 @@ def primera_jugada(fichas, window, dificultad, letrasT, valores, valor_boton, ju
     return puntos
 
 
-def se_sigue(fichas, letrast, dificultad, window, valores, valor_boton, jugada, claves):
+def se_sigue(fichas, letrast, dificultad, window, valores, valor_boton, jugada, claves,categoria):
+    """como a la maquina no le toca insertar letras en la primera posicion entonces busca un lugar donde insertar
+    sin que se choque con ninguna palabra ya formada """
     n = 0
     ok = False
     puntos = 0
-    palabra = buscar_palabra(fichas, dificultad)
+    palabra = buscar_palabra(fichas, dificultad,categoria)
     while not ok:
         x = random.randrange(15)
         y = random.randrange(15)
@@ -77,7 +77,8 @@ def se_sigue(fichas, letrast, dificultad, window, valores, valor_boton, jugada, 
                         abajo = not abajo
                         lugar = not lugar
                     print("el tamanio es: " + str(len(letras_dic)))
-                    if len(letras_dic) >= dic[dificultad]:  # si el tamaño es acorde a la dificultad pone la letra
+                    if len(letras_dic) == len(palabra) and len(palabra)>= 2:  # si el tamaño es acorde a la dificultad pone la letra
+                        print(palabra)
                         for i in letras_dic.keys():
                             letrast.append(i)
                             claves[i] = letras_dic[i]
@@ -106,7 +107,8 @@ def se_sigue(fichas, letrast, dificultad, window, valores, valor_boton, jugada, 
                         derecha = not derecha
                         lugar = not lugar
                     print("el tamanio es: " + str(len(letras_dic)))
-                    if len(letras_dic) >= dic[dificultad]:
+                    if len(letras_dic) == len(palabra) and len(palabra)>= 2 :
+                        print(palabra)
                         for i in letras_dic.keys():
                             letrast.append(i)
                             puntos += valor_boton[i].devolverValor(valores[letras_dic[i]])
@@ -128,10 +130,12 @@ def se_sigue(fichas, letrast, dificultad, window, valores, valor_boton, jugada, 
     return puntos
 
 
-def turno_pc(fichas, letrasT, window, dificultad, valores, valor_boton, jugada, claves):
+def turno_pc(fichas, letrasT, window, dificultad, valores, valor_boton, jugada, claves,categoria):
+    """en este modulo se determina si la pc empieza primero y inserta la palabra en la posicion inicial o si
+    inserta en una posicion aleatoria del tablero """
     if len(letrasT) == 0:  # en el caso de no sea 0 es porque no hay ninguna palabra puesta y la palabra se pone el 77
-        puntaje = primera_jugada(fichas, window, dificultad, letrasT, valores, valor_boton, jugada, claves)
+        puntaje = primera_jugada(fichas, window, dificultad, letrasT, valores, valor_boton, jugada, claves,categoria)
         return puntaje
     else:
-        puntaje = se_sigue(fichas, letrasT, dificultad, window, valores, valor_boton, jugada, claves)
+        puntaje = se_sigue(fichas, letrasT, dificultad, window, valores, valor_boton, jugada, claves,categoria)
         return puntaje

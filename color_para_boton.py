@@ -1,4 +1,6 @@
 def nivel(dificultad):
+    """es una funcion que se usa para armar el tablero dependiendo la dificultad el diccionario contiene el color
+    para cada celda del tablero"""
     dic = dict()
     dic['azul'] = [(1, 5), (1, 9), (13, 9), (13, 5), (6, 6), (6, 8), (8, 6), (8, 8), (5, 1), (9, 1), (9, 13,), (5, 13)]
     dic['rojo'] = [(1, 1), (3, 3), (5, 5), (1, 13), (3, 11), (5, 9), (9, 5), (11, 3), (13, 1), (9, 9), (11, 11),
