@@ -2,6 +2,13 @@ import random
 
 from buscador_palabra import buscar_palabra
 
+<<<<<<< HEAD
+=======
+#dic = dict()
+#dic['facil'] = 2
+#dic['medio'] = 3
+#dic['dificil'] = 4
+>>>>>>> 78eb081f5d9b592eea79f20f45c9dc22bfcb1a1e
 
 
 def devolverString(x, y):
@@ -10,8 +17,11 @@ def devolverString(x, y):
 
 
 def primera_jugada(fichas, window, dificultad, letrasT, valores, valor_boton, jugada, claves,categoria):
+<<<<<<< HEAD
     """como es la primera jugada se inserta tranquilamente en la posicion inicial del juego se elige si se inserta
      abajo o a la derecha dependiendo del valor que reciba la variable "lugar" del la operacion random.choice()"""
+=======
+>>>>>>> 78eb081f5d9b592eea79f20f45c9dc22bfcb1a1e
     palabra = buscar_palabra(fichas, dificultad,categoria)
     puntos = 0
     x, y = 7, 7
@@ -43,8 +53,11 @@ def primera_jugada(fichas, window, dificultad, letrasT, valores, valor_boton, ju
 
 
 def se_sigue(fichas, letrast, dificultad, window, valores, valor_boton, jugada, claves,categoria):
+<<<<<<< HEAD
     """como a la maquina no le toca insertar letras en la primera posicion entonces busca un lugar donde insertar
     sin que se choque con ninguna palabra ya formada """
+=======
+>>>>>>> 78eb081f5d9b592eea79f20f45c9dc22bfcb1a1e
     n = 0
     ok = False
     puntos = 0
@@ -131,8 +144,11 @@ def se_sigue(fichas, letrast, dificultad, window, valores, valor_boton, jugada, 
 
 
 def turno_pc(fichas, letrasT, window, dificultad, valores, valor_boton, jugada, claves,categoria):
+<<<<<<< HEAD
     """en este modulo se determina si la pc empieza primero y inserta la palabra en la posicion inicial o si
     inserta en una posicion aleatoria del tablero """
+=======
+>>>>>>> 78eb081f5d9b592eea79f20f45c9dc22bfcb1a1e
     if len(letrasT) == 0:  # en el caso de no sea 0 es porque no hay ninguna palabra puesta y la palabra se pone el 77
         puntaje = primera_jugada(fichas, window, dificultad, letrasT, valores, valor_boton, jugada, claves,categoria)
         return puntaje
