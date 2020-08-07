@@ -308,6 +308,7 @@ def abrir_configuracion():
             window.Close()
             gui_configuracion.abrir_configuracion()
             break
+    return
 
 
 if __name__ == "__main__":
