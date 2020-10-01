@@ -14,6 +14,7 @@ def ventana_juego():
     from Puntajes import puntajes as Puntajes
     from datetime import datetime as fecha_y_hora
     import json
+    from os import sep
 
     jugada=[]#debe contener cada jugada que hace el jugador, que palabra pone y el puntaje obtenido
 
@@ -225,12 +226,12 @@ def ventana_juego():
             ext = [[sg.Listbox(values=jugadas, key="jugada2", size=(50, 10))],[sg.Text("el puntaje es "+str(puntaje), key="puntajeIA", size=(20, 1))]]
         list =[crear_atril("bot")]
         list.extend(ext)
-        list.append(ayuda_memoria(categoria,dificultad))
+        list.append(ayuda_memoria(categoria, dificultad))
         return list
 
-    def verificarConfirmar(list, l,categoria):
+    def verificarConfirmar(list, l, categoria):
         """se pregunta si todo esta bien para insertar la palabras"""
-        if (len(list) > 1) and (palabraValida(l, dificultad,categoria)):
+        if (len(list) > 1) and (palabraValida(l, dificultad, categoria)):
             return True
         else:
             return False
@@ -271,7 +272,7 @@ def ventana_juego():
     def guardar(**kwargs):
         """recibe un diccionario y lo almacena en formato json"""
         print(kwargs)
-        archivo = open("guardar\jugadaGuardada", "w")
+        archivo = open("guardar"+sep+"jugadaGuardada", "w")
         json.dump(kwargs, archivo)
         archivo.close()
 
@@ -418,7 +419,8 @@ def ventana_juego():
             columna_derecha = crear_derecha(jugada, puntajeTotal)
         except FileNotFoundError:
             sg.popup("no hay partida guardada")
-    elif evento == "no continuar":#inicia una partida nueva
+            evento = "no continuar"
+    if evento == "no continuar":#inicia una partida nueva
         """si se selecciona continuar se crea un layout desde cero"""
         if len(bolsa) < 20:
             sg.PopupError("Minimo de letras permitodo es 20. Agregue mas y vuelva a intentar")
@@ -476,7 +478,8 @@ def ventana_juego():
                 if current_time < tiempo_total:
                     current_time = int(round(time.time() * 100)) - start_time
                 else:  # se termina el juego y se define al ganador
-                    raise TimeoutError
+                    fin_juego(puntajeTotal, puntajeMaquina, atril_jugador, atrilMaquina, valores)
+                    break
 
             if not comenzar:
                 event, values = window.Read()  # espera leer un click en pantalla
@@ -545,8 +548,9 @@ def ventana_juego():
                 break
 
             elif event == "terminar":
-                """termina el juego levantando un excepcion para que lo agarre le except"""
-                raise TimeoutError
+                """termina el juego"""
+                fin_juego(puntajeTotal, puntajeMaquina, atril_jugador, atrilMaquina, valores)
+                break
 
             elif event == "confirmar":  # ingresa la palabra en el tablero
                 """se revisa la palabra y si cumple con los criterios del nivel la escribe en el tablero"""
@@ -655,7 +659,7 @@ def ventana_juego():
                                                                              (current_time // 100) % 60,
                                                                              current_time % 100))
 
-        except (IndexError, TimeoutError):
+        except (IndexError):
              fin_juego(puntajeTotal, puntajeMaquina, atril_jugador, atrilMaquina, valores)
              break
 

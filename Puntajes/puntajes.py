@@ -48,7 +48,7 @@ def obtener_puntajes():
     """intenta abrir la puntajes sino crea un predeterminada"""
     try:
         archivo_puntajes = open("Puntajes" + sep + "puntajes.json", "r")
-    except:
+    except FileNotFoundError:
         puntajes = abrir_puntajes()
 
     else:
@@ -61,7 +61,7 @@ def obtener_puntajes():
                                 total=p["total"]
             )
 
-        except:
+        except PermissionError or FileExistsError:
             puntajes = abrir_puntajes()
 
     return puntajes
@@ -73,7 +73,7 @@ def guardar_puntajes(puntajes):
     try:
         archivo_puntajes = open("Puntajes" + sep + "puntajes.json", "w+")
         json.dump(puntajes, archivo_puntajes, cls=ConfigEncoder, indent=4)
-    except:
+    except FileNotFoundError:
         exito = False
     else:
         exito = True

@@ -64,7 +64,7 @@ def obtener_config():
     """intenta abrir la configuracion sino crea un predeterminada"""
     try:
         archivo_configuracion = open('Configuracion' + sep + 'config.json', 'r')
-    except:
+    except FileNotFoundError:
         configuracion = abrir_configuracion()
 
     else:
@@ -78,7 +78,7 @@ def obtener_config():
                 cantidad_fichas=c["cantidad_fichas"],
             )
 
-        except:
+        except PermissionError or FileExistsError:
             configuracion = abrir_configuracion()
 
     return configuracion
@@ -90,7 +90,7 @@ def guardar_configuracion(configuracion):
     try:
         archivo_configuracion = open('Configuracion' + sep + 'config.json', 'w+')
         json.dump(configuracion, archivo_configuracion, cls=ConfigEncoder, indent=4)
-    except:
+    except FileNotFoundError:
         exito = False
     else:
         exito = True

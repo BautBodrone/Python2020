@@ -16,7 +16,7 @@ def primera_jugada(fichas, window, dificultad, letrasT, valores, valor_boton, ju
     """como es la primera jugada se inserta tranquilamente en la posicion inicial del juego se elige si se inserta
      abajo o a la derecha dependiendo del valor que reciba la variable "lugar" del la operacion random.choice()"""
     palabra = buscar_palabra(fichas, dificultad,categoria)
-    if palabra is not False:
+    if palabra is not "":
         puntos = 0
         x, y = 7, 7
         lugar = random.choice([True, False])  # true=derecha y false=abajo
