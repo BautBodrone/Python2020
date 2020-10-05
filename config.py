@@ -309,7 +309,3 @@ def abrir_configuracion():
             gui_configuracion.abrir_configuracion()
             break
     return
-
-
-if __name__ == "__main__":
-    abrir_configuracion()

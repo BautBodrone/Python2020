@@ -3,9 +3,11 @@
 # Javier Franco Jose Camacho Encinas
 #
 # GPL-3.0-or-later
+
+import PySimpleGUI as sg
+from Puntajes import puntajes as Puntajes
+
 def puntajes_GUI():
-    import PySimpleGUI as sg
-    from Puntajes import puntajes as Puntajes
 
     puntaje = Puntajes.obtener_puntajes()
     facil, medio, dificil = puntaje.por_nivel()
@@ -50,7 +52,3 @@ def puntajes_GUI():
         else:
             window.Close()
             break
-
-
-if __name__ == "__main__":
-    puntajes_GUI()

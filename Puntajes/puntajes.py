@@ -61,7 +61,7 @@ def obtener_puntajes():
                                 total=p["total"]
             )
 
-        except PermissionError or FileExistsError:
+        except PermissionError:
             puntajes = abrir_puntajes()
 
     return puntajes
