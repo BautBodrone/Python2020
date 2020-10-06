@@ -5,10 +5,10 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Configuracion/config.json" beforeDir="false" afterPath="$PROJECT_DIR$/Configuracion/config.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Puntajes/puntajes.json" beforeDir="false" afterPath="$PROJECT_DIR$/Puntajes/puntajes.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Puntajes/puntajes.py" beforeDir="false" afterPath="$PROJECT_DIR$/Puntajes/puntajes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/color_para_boton.py" beforeDir="false" afterPath="$PROJECT_DIR$/color_para_boton.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/guardar/jugadaGuardada.json" beforeDir="false" afterPath="$PROJECT_DIR$/guardar/jugadaGuardada.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/puntajes_GUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/puntajes_GUI.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrabelAR.py" beforeDir="false" afterPath="$PROJECT_DIR$/scrabelAR.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tableroDeJuego.py" beforeDir="false" afterPath="$PROJECT_DIR$/tableroDeJuego.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -50,7 +50,7 @@
       <recent name="C:\Users\wat_o\Desktop" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.scrabelAR">
+  <component name="RunManager" selected="Python.tableroDeJuego">
     <configuration name="buscador_palabra" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Python2020" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -64,6 +64,27 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/buscador_palabra.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="config" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Python2020" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/config.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -114,27 +135,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="sliders" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="Python2020" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$USER_HOME$/Desktop/PythonRandom" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$USER_HOME$/Desktop/PythonRandom/sliders.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="tableroDeJuego" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Python2020" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -158,11 +158,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.scrabelAR" />
         <item itemvalue="Python.tableroDeJuego" />
+        <item itemvalue="Python.scrabelAR" />
+        <item itemvalue="Python.config" />
         <item itemvalue="Python.puntajes_GUI" />
         <item itemvalue="Python.buscador_palabra" />
-        <item itemvalue="Python.sliders" />
       </list>
     </recent_temporary>
   </component>
@@ -180,26 +180,26 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="516" y="268" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1596578544882">
+    <state x="516" y="268" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1601900024962">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="516" y="268" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.1536.824@0.0.1536.824" timestamp="1596578544882" />
-    <state width="1515" height="148" key="GridCell.Tab.0.bottom" timestamp="1601898740118">
+    <state x="516" y="268" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.1536.824@0.0.1536.824" timestamp="1601900024962" />
+    <state width="1515" height="148" key="GridCell.Tab.0.bottom" timestamp="1601988651833">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="148" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1601898740118" />
-    <state width="1515" height="148" key="GridCell.Tab.0.center" timestamp="1601898740118">
+    <state width="1515" height="148" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1601988651833" />
+    <state width="1515" height="148" key="GridCell.Tab.0.center" timestamp="1601988651832">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="148" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1601898740118" />
-    <state width="1515" height="148" key="GridCell.Tab.0.left" timestamp="1601898740118">
+    <state width="1515" height="148" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1601988651832" />
+    <state width="1515" height="148" key="GridCell.Tab.0.left" timestamp="1601988651832">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="148" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1601898740118" />
-    <state width="1515" height="148" key="GridCell.Tab.0.right" timestamp="1601898740118">
+    <state width="1515" height="148" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1601988651832" />
+    <state width="1515" height="148" key="GridCell.Tab.0.right" timestamp="1601988651833">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1515" height="148" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1601898740118" />
+    <state width="1515" height="148" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1601988651833" />
     <state width="1515" height="261" key="GridCell.Tab.1.bottom" timestamp="1596662455914">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
@@ -228,20 +228,5 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state width="600" height="401" key="javadoc.popup/0.0.1536.824@0.0.1536.824" timestamp="1593439552252" />
-    <state x="431" y="145" width="672" height="678" key="search.everywhere.popup" timestamp="1593290373231">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state x="431" y="145" width="672" height="678" key="search.everywhere.popup/0.0.1536.824@0.0.1536.824" timestamp="1593290373231" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/config.py</url>
-          <line>5</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

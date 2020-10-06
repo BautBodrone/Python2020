@@ -19,16 +19,15 @@ def nivel(dificultad):
             (10, 1), (4, 13), (5, 12), (6, 11), (7, 10), (8, 11), (9, 12), (10, 13), (10, 7), (11, 6), (12, 5), (13, 4),
             (11, 8), (12, 9), (13, 10)]
 
-    if(dificultad == "facil"):
+    if (dificultad == "facil"):
         dic['verde'].extend(aux1)
 
-    elif(dificultad == "medio"):
+    elif (dificultad == "medio"):
         dic['rojo'].extend(aux1)
         dic['rojo'].extend(aux2)
 
-    elif(dificultad == "dificil"):
+    elif (dificultad == "dificil"):
         dic['rojo'].extend(aux1)
         dic['rojo'].extend(aux3)
 
     return dic
-

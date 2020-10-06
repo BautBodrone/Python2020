@@ -5,10 +5,11 @@
 # GPL-3.0-or-later
 
 import PySimpleGUI as sg
+
 from Puntajes import puntajes as Puntajes
 
-def puntajes_GUI():
 
+def puntajes_GUI():
     puntaje = Puntajes.obtener_puntajes()
     facil, medio, dificil = puntaje.por_nivel()
     total = puntaje.por_puntaje()
@@ -52,3 +53,7 @@ def puntajes_GUI():
         else:
             window.Close()
             break
+
+
+if __name__ == "__main__":
+    puntajes_GUI()
