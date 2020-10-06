@@ -668,28 +668,27 @@ def ventana_juego():
                     window.Element(event).Update(disabled=True, disabled_button_color=("silver", "silver"))
                     letras.append(event)
 
-                else:
-                    if event in presionadas:
-                        presionadas.remove(event)
-                        window.Element(event).Update(text="")
-                        window.Element(event).Update(button_color=("black", "white"))
-                    else:  # entra si la celda del tablero esta en blanco
-                        if event != "__TIMEOUT__" and not event in botones_usados:
-                            presionadas.append(event)
-                            window.Element(event).Update(text=actual)
-                            window.Element(event).Update(button_color=("black", "violet"))
-                            bloquear_boton(matriz, exception_bloqueo)
+                elif event in presionadas:
+                    presionadas.remove(event)
+                    window.Element(event).Update(text="")
+                    window.Element(event).Update(button_color=("black", "white"))
+                elif event != "__TIMEOUT__" and not event in botones_usados:# entra si la celda del tablero esta en blanco
+                    presionadas.append(event)
+                    window.Element(event).Update(text=actual)
+                    window.Element(event).Update(button_color=("black", "violet"))
+                    bloquear_boton(matriz, exception_bloqueo)
 
                 if event != "__TIMEOUT__":
                     event_anterior = event
                 if not turno_elegido:
                     window.Element("turno_actual_display").Update(value="Turno actual: Maquina")
                     print("turno de la maquina")
+                    estado={"est":True}
                     print(atrilMaquina)
                     puntajeMaquina += float(
                         turno_pc(atrilMaquina, botones_usados, window, dificultad, valores, dic, jugadasMaquina,
                                  clavesMaquina, cate))
-                    if puntajeMaquina is not False:
+                    if estado["est"]:
                         window.Element("puntajeIA").Update("el puntaje total es: {}".format(str(puntajeMaquina)))
                         print(atrilMaquina)
                         while len(atrilMaquina) != 7:
